@@ -47,7 +47,6 @@
     <dependency org="junit" name="junit" rev="4.11" conf="test->default"/>
     <dependency org="log4j" name="log4j" rev="1.2.17" conf="runtime->default"/>
     <dependency org="org.mockito" name="mockito-all" rev="1.9.5" conf="test->default"/>
-    <dependency org="org.apache.qpid" name="qpid-broker" rev="0.30" conf="test->default"/>
 
     <dependency org="org.apache.activemq" name="activemq-client" rev="5.9.0"  conf="test->default"  />
     <dependency org="org.apache.activemq" name="activemq-broker" rev="5.9.0"  conf="test->default"  />
