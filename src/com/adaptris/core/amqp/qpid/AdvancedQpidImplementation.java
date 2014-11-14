@@ -13,9 +13,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 /**
  * AMQP 1.0 implementation of {@link VendorImplementation} using Apache Qpid
  * <p>
- * This vendor implementation class directly exposes almost all the getter and setters that are available in the ConnectionFactory
- * for maximum flexibility in configuration. The main difference between this and {@link BasicQpidImplementation} is that you do not
- * have to configure all the properties inside the URL, which is simply a bonus for readability.
+ * This vendor implementation class directly exposes almost all the setters that are available in the ConnectionFactory for maximum
+ * flexibility in configuration. The main difference between this and {@link BasicQpidImplementation} is that you do not have to
+ * configure all the properties as part of the URL, which is simply a bonus for readability. The Keystore and Truststore passwords
+ * may also be encoded using {@link Password#encode(String, String)} rather than plain text.
  * </p>
  * <p>
  * The key from the <code>connection-factory-properties</code> element should match the name of the underlying Qpid
@@ -28,8 +29,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *     &lt;/key-value-pair>
  *   &lt;/connection-factory-properties>
  * </pre>
- * </code> will invoke {@link ConnectionFactoryImpl#setQueuePrefix("abc")}, setting the QueuePrefix property to "abc". Only
- * explicitly configured properties will invoke the associated setter method.
+ * </code> will invoke {@link ConnectionFactoryImpl#setQueuePrefix(String)}, setting the QueuePrefix property to "abc". Only
+ * explicitly configured properties will invoke the associated setter method; unmatched properties are ignored and is not case
+ * sensitive
  * </p>
  * <p>
  * <b>This was built against Qpid 0.30</b>
@@ -46,7 +48,7 @@ public class AdvancedQpidImplementation extends BasicQpidImplementation {
    */
   public enum ConnectionFactoryProperty {
     /**
-     * @see ConnectionFactoryImpl#setAutoGroup(boolean)
+     * @see ConnectionFactoryImpl#setQueuePrefix(String)
      */
     QueuePrefix {
       @Override
@@ -54,54 +56,91 @@ public class AdvancedQpidImplementation extends BasicQpidImplementation {
         cf.setQueuePrefix(o);
       }
     },
+    /**
+     * @see ConnectionFactoryImpl#setTopicPrefix(String)
+     */
     TopicPrefix {
       @Override
       void applyProperty(ConnectionFactoryImpl cf, String o) {
         cf.setTopicPrefix(o);
       }
     },
+    /**
+     * @see ConnectionFactoryImpl#setUseBinaryMessageId(boolean)
+     */
     UseBinaryMessageId {
       @Override
       void applyProperty(ConnectionFactoryImpl cf, String o) {
         cf.setUseBinaryMessageId(Boolean.valueOf(o));
       }
     },
+    /**
+     * @see ConnectionFactoryImpl#setSyncPublish(Boolean)
+     */
     SyncPublish {
       @Override
       void applyProperty(ConnectionFactoryImpl cf, String o) {
         cf.setSyncPublish(Boolean.valueOf(o));
       }
     },
+    /**
+     * @see ConnectionFactoryImpl#setMaxPrefetch(int)
+     */
     MaxPrefetch {
       @Override
       void applyProperty(ConnectionFactoryImpl cf, String o) {
         cf.setMaxPrefetch(Integer.valueOf(o));
       }
     },
+    /**
+     * @see ConnectionFactoryImpl#setKeyStorePath(String)
+     */
     KeyStorePath {
       @Override
       void applyProperty(ConnectionFactoryImpl cf, String o) {
         cf.setKeyStorePath(o);
       }
     },
+    /**
+     * Set the keystore password.
+     * <p>
+     * This password may be encoded using {@link Password#encode(String, String)}
+     * </p>
+     * 
+     * @see ConnectionFactoryImpl#setKeyStorePassword(String)
+     */
     KeyStorePassword {
       @Override
       void applyProperty(ConnectionFactoryImpl cf, String o) throws Exception {
         cf.setKeyStorePassword(Password.decode(o));
       }
     },
+    /**
+     * @see ConnectionFactoryImpl#setKeyStoreCertAlias(String)
+     */
     KeyStoreCertAlias {
       @Override
       void applyProperty(ConnectionFactoryImpl cf, String o) {
         cf.setKeyStoreCertAlias(o);
       }
     },
+    /**
+     * @see ConnectionFactoryImpl#setTrustStorePath(String)
+     */
     TrustStorePath {
       @Override
       void applyProperty(ConnectionFactoryImpl cf, String o) {
         cf.setTrustStorePath(o);
       }
     },
+    /**
+     * Set the truststore password.
+     * <p>
+     * This password may be encoded using {@link Password#encode(String, String)}
+     * </p>
+     * 
+     * @see ConnectionFactoryImpl#setTrustStorePassword(String)
+     */
     TrustStorePassword {
       @Override
       void applyProperty(ConnectionFactoryImpl cf, String o) throws Exception {
@@ -138,7 +177,7 @@ public class AdvancedQpidImplementation extends BasicQpidImplementation {
    *     &lt;/key-value-pair>
    *   &lt;/connection-factory-properties>
    * </pre>
-   * </code> will invoke {@link ConnectionFactoryImpl#setQueuePrefix("abc")}, setting the QueuePrefix property to "abc". Only
+   * </code> will invoke {@link ConnectionFactoryImpl#setQueuePrefix(String)}, setting the QueuePrefix property to "abc". Only
    * explicitly configured properties will invoke the associated setter method.
    * </p>
    * 
