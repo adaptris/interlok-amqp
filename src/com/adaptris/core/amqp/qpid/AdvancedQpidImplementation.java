@@ -11,7 +11,7 @@ import com.adaptris.util.KeyValuePairSet;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * AMQP 1.0 implementation of {@link VendorImplementation} using Apache Qpid
+ * AMQP 1.0 implementation of {@link VendorImplementation} using Apache Qpid.
  * <p>
  * This vendor implementation class directly exposes almost all the setters that are available in the ConnectionFactory for maximum
  * flexibility in configuration. The main difference between this and {@link BasicQpidImplementation} is that you do not have to
@@ -19,8 +19,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * may also be encoded using {@link Password#encode(String, String)} rather than plain text.
  * </p>
  * <p>
- * The key from the <code>connection-factory-properties</code> element should match the name of the underlying Qpid
- * ConnectionFactory property. <code>
+ * The key from the {@code connection-factory-properties} element should match the name of the underlying Qpid ConnectionFactory
+ * property. <code>
  * <pre>
  *   &lt;connection-factory-properties>
  *     &lt;key-value-pair>
@@ -30,8 +30,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *   &lt;/connection-factory-properties>
  * </pre>
  * </code> will invoke {@link ConnectionFactoryImpl#setQueuePrefix(String)}, setting the QueuePrefix property to "abc". Only
- * explicitly configured properties will invoke the associated setter method; unmatched properties are ignored and is not case
- * sensitive
+ * explicitly configured properties will invoke the associated setter method; unmatched properties are ignored and property keys are
+ * not case sensitive
  * </p>
  * <p>
  * <b>This was built against Qpid 0.30</b>
@@ -165,7 +165,7 @@ public class AdvancedQpidImplementation extends BasicQpidImplementation {
   }
 
   /**
-   * Set any additional HornetQConnectionFactory properties that are required.
+   * Set any additional ConnectionFactory properties that are required.
    * <p>
    * The key from the <code>connection-factory-properties</code> element should match the name of the underlying Qpid
    * ConnectionFactory property. <code>
