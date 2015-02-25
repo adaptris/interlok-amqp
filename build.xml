@@ -11,7 +11,7 @@
 
     <property name="ivy.publish.revision" value="3.0-SNAPSHOT"/>  <!-- Version number of this artifact -->
     <property name="adp-core-version" value="3.0-SNAPSHOT"/>
-    <property name="manifest.title" value="Interlok AMQ Messaging"/>
+    <property name="manifest.title" value="Interlok/AMQP"/>
     <property name="src.dir" value="${basedir}/src"/>
     <property name="build-util.lib.dir"     value="${basedir}/../build-util"/>
 
