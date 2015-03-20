@@ -1,9 +1,11 @@
 package com.adaptris.core.amqp.qpid;
 
 import javax.jms.JMSException;
+import javax.validation.constraints.NotNull;
 
 import org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl;
 
+import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.core.jms.VendorImplementation;
 import com.adaptris.security.password.Password;
 import com.adaptris.util.KeyValuePair;
@@ -151,6 +153,8 @@ public class AdvancedQpidImplementation extends BasicQpidImplementation {
     abstract void applyProperty(ConnectionFactoryImpl cf, String s) throws Exception;
   }
 
+  @NotNull
+  @AutoPopulated
   private KeyValuePairSet connectionFactoryProperties;
 
   public AdvancedQpidImplementation() {
