@@ -33,6 +33,7 @@
 
     <dependency org="com.thoughtworks.xstream" name="xstream" rev="1.4.7"  conf="compile->default"  transitive="false"/>
     <dependency org="org.apache.geronimo.specs" name="geronimo-jms_1.1_spec" rev="1.1.1" conf="test->default"/>
+    <dependency org="org.apache.qpid" name="qpid-jms-client" rev="0.2.0" conf="compile->default"/>
     <dependency org="org.apache.qpid" name="qpid-amqp-1-0-client-jms" rev="0.32" conf="compile->default"/>
     <dependency org="org.apache.qpid" name="qpid-client" rev="0.32" conf="compile->default"/>
     <dependency org="org.apache.qpid" name="proton-jms" rev="0.8" conf="compile->default"/>

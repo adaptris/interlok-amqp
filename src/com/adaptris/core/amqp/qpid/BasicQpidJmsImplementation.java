@@ -3,7 +3,7 @@ package com.adaptris.core.amqp.qpid;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 
-import org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl;
+import org.apache.qpid.jms.JmsConnectionFactory;
 
 import com.adaptris.core.jms.JmsConnection;
 import com.adaptris.core.jms.UrlVendorImplementation;
@@ -20,25 +20,24 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * otherwise {@link ConnectionFactory#createConnection()} will be used.
  * </p>
  * <p>
- * This was built against {@code org.apache.qpid:qpid-amqp-1-0-client-jms:0.32}
+ * This was built against {@code org.apache.qpid:qpid-jms-client:0.2.0}
  * </p>
  * 
- * @config qpid-basic-amqp-implementation
+ * @config qpid-basic-jms-implementation
  * @license BASIC
- * @deprecated since 3.0.3 use {@link BasicQpidJmsImplementation} instead for AMQP 1.0
+ * @since 3.0.3
  */
-@XStreamAlias("qpid-basic-amqp-implementation")
-@Deprecated
-public class BasicQpidImplementation extends UrlVendorImplementation {
+@XStreamAlias("qpid-basic-jms-implementation")
+public class BasicQpidJmsImplementation extends UrlVendorImplementation {
 
-  ConnectionFactoryImpl createQpidConnectionFactory() throws JMSException {
-    ConnectionFactoryImpl cf;
+  JmsConnectionFactory createQpidConnectionFactory() throws JMSException {
+    JmsConnectionFactory cf = null;
     try {
-      cf = ConnectionFactoryImpl.createFromURL(getBrokerUrl());
-    }
-    catch (Exception e) {
+      cf = new JmsConnectionFactory(getBrokerUrl());
+    } catch (Exception e) {
       throw new JMSException(e.getMessage());
     }
+
     return cf;
   }
 
@@ -49,6 +48,6 @@ public class BasicQpidImplementation extends UrlVendorImplementation {
 
   @Override
   public boolean connectionEquals(VendorImplementation vendorImp) {
-    return (vendorImp instanceof BasicQpidImplementation) && super.connectionEquals(vendorImp);
+    return (vendorImp instanceof BasicQpidJmsImplementation) && super.connectionEquals(vendorImp);
   }
 }

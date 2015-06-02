@@ -25,11 +25,11 @@ public class AdvancedQpidConsumerTest extends BasicQpidConsumerTest {
     return result;
   }
 
-  protected AdvancedQpidImplementation createVendorImpl() {
-    AdvancedQpidImplementation mq = new AdvancedQpidImplementation();
+  protected AdvancedQpidJmsImplementation createVendorImpl() {
+    AdvancedQpidJmsImplementation mq = new AdvancedQpidJmsImplementation();
     mq.setBrokerUrl("amqp://localhost:5672?clientid=test-client&remote-host=default");
     mq.getConnectionFactoryProperties().add(new KeyValuePair("QueuePrefix", "myQueuePrefix"));
-    mq.getConnectionFactoryProperties().add(new KeyValuePair("TopicPrefxi", "myTopicPrefix"));
+    mq.getConnectionFactoryProperties().add(new KeyValuePair("TopicPrefix", "myTopicPrefix"));
     return mq;
   }
 }

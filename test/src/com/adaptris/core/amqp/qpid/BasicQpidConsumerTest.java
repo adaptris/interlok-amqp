@@ -34,8 +34,8 @@ public class BasicQpidConsumerTest extends JmsConsumerCase {
     return c;
   }
 
-  protected BasicQpidImplementation createVendorImpl() {
-    BasicQpidImplementation mq = new BasicQpidImplementation();
+  protected BasicQpidJmsImplementation createVendorImpl() {
+    BasicQpidJmsImplementation mq = new BasicQpidJmsImplementation();
     mq.setBrokerUrl("amqp://localhost:5672?clientid=test-client&remote-host=default");
     return mq;
   }
