@@ -32,7 +32,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </p>
  * 
  * @config qpid-advanced-jms-implementation
- * @license BASIC
  * @since 3.0.3
  */
 @XStreamAlias("qpid-advanced-jms-implementation")

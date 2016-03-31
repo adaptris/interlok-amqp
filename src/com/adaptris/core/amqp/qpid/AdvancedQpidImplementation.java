@@ -45,7 +45,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </p>
  * 
  * @config qpid-advanced-amqp-implementation
- * @license BASIC
  * @deprecated since 3.0.3 use {@link AdvancedQpidJmsImplementation} instead for AMQP 1.0
  */
 @XStreamAlias("qpid-advanced-amqp-implementation")

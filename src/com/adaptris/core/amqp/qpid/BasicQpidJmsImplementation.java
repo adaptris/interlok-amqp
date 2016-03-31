@@ -24,7 +24,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </p>
  * 
  * @config qpid-basic-jms-implementation
- * @license BASIC
  * @since 3.0.3
  */
 @XStreamAlias("qpid-basic-jms-implementation")

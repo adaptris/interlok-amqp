@@ -18,11 +18,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * connection otherwise {@link ConnectionFactory#createConnection()} will be used.
  * </p>
  * <p>
- * <b>This was built against Qpid 0.30</b>
+ * This was built against {@code org.apache.qpid:qpid-client:6.0.1}
  * </p>
  * 
  * @config 0-10-qpid-implementation
- * @license BASIC
  */
 @XStreamAlias("0-10-qpid-implementation")
 public class StandardQpidImplementation extends UrlVendorImplementation {
