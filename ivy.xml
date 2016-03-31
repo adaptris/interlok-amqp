@@ -33,17 +33,17 @@
 
     <dependency org="com.thoughtworks.xstream" name="xstream" rev="1.4.7"  conf="compile->default"  transitive="false"/>
     <dependency org="org.apache.geronimo.specs" name="geronimo-jms_1.1_spec" rev="1.1.1" conf="test->default"/>
-    <dependency org="org.apache.qpid" name="qpid-jms-client" rev="0.2.0" conf="compile->default"/>
+    <dependency org="org.apache.qpid" name="qpid-jms-client" rev="0.8.0" conf="compile->default"/>
     <dependency org="org.apache.qpid" name="qpid-amqp-1-0-client-jms" rev="0.32" conf="compile->default"/>
-    <dependency org="org.apache.qpid" name="qpid-client" rev="0.32" conf="compile->default"/>
-    <dependency org="org.apache.qpid" name="proton-jms" rev="0.8" conf="compile->default"/>
-    <dependency org="org.apache.qpid" name="proton-j" rev="0.8" conf="compile->default"/>
+    <dependency org="org.apache.qpid" name="qpid-client" rev="6.0.1" conf="compile->default"/>
+    <dependency org="org.apache.qpid" name="proton-jms" rev="0.12.1" conf="compile->default"/>
+    <dependency org="org.apache.qpid" name="proton-j" rev="0.12.1" conf="compile->default"/>
 
 
     <dependency org="org.apache.velocity" name="velocity" rev="1.7" transitive="false" conf="compile->default"/>
-    <dependency org="org.slf4j" name="slf4j-api" rev="1.7.12" conf="compile->default" />
-    <dependency org="org.slf4j" name="jcl-over-slf4j" rev="1.7.12" conf="optional->default" />
-    <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.7.12" conf="optional->default"/>
+    <dependency org="org.slf4j" name="slf4j-api" rev="1.7.20" conf="compile->default" />
+    <dependency org="org.slf4j" name="jcl-over-slf4j" rev="1.7.20" conf="optional->default" />
+    <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.7.20" conf="optional->default"/>
     <dependency org="log4j" name="log4j" rev="1.2.17" force="true" conf="test->default;ant->default"/>
 
     <dependency org="junit" name="junit" rev="4.11" conf="test->default"/>
