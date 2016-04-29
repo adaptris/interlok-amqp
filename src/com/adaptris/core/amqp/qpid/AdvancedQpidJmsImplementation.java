@@ -28,11 +28,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * used.
  * </p>
  * <p>
- * This was built against {@code org.apache.qpid:qpid-jms-client:0.2.0}
+ * This was built against {@code org.apache.qpid:qpid-jms-client:0.8.0}
  * </p>
  * 
  * @config qpid-advanced-jms-implementation
- * @license BASIC
  * @since 3.0.3
  */
 @XStreamAlias("qpid-advanced-jms-implementation")

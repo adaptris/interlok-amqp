@@ -24,7 +24,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * </p>
  * 
  * @config qpid-basic-amqp-implementation
- * @license BASIC
  * @deprecated since 3.0.3 use {@link BasicQpidJmsImplementation} instead for AMQP 1.0
  */
 @XStreamAlias("qpid-basic-amqp-implementation")

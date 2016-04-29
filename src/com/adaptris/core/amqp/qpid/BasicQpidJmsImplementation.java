@@ -20,11 +20,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * otherwise {@link ConnectionFactory#createConnection()} will be used.
  * </p>
  * <p>
- * This was built against {@code org.apache.qpid:qpid-jms-client:0.2.0}
+ * This was built against {@code org.apache.qpid:qpid-jms-client:0.8.0}
  * </p>
  * 
  * @config qpid-basic-jms-implementation
- * @license BASIC
  * @since 3.0.3
  */
 @XStreamAlias("qpid-basic-jms-implementation")
