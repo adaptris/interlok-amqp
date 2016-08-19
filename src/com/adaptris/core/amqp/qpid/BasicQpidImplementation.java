@@ -8,6 +8,7 @@ import org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl;
 import com.adaptris.core.jms.JmsConnection;
 import com.adaptris.core.jms.UrlVendorImplementation;
 import com.adaptris.core.jms.VendorImplementation;
+import com.adaptris.core.jms.VendorImplementationBase;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -47,7 +48,7 @@ public class BasicQpidImplementation extends UrlVendorImplementation {
   }
 
   @Override
-  public boolean connectionEquals(VendorImplementation vendorImp) {
+  public boolean connectionEquals(VendorImplementationBase vendorImp) {
     return (vendorImp instanceof BasicQpidImplementation) && super.connectionEquals(vendorImp);
   }
 }
