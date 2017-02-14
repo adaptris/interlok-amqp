@@ -41,7 +41,7 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
   @AutoPopulated
   private KeyValuePairSet connectionFactoryProperties;
   
-  private enum ConnectionFactoryProperties {
+  private enum ConnectionFactoryProperty {
     
     Channel_QoS {
       @Override
@@ -155,6 +155,14 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
     } ;
     
     public abstract void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException;
+    
+    public static ConnectionFactoryProperty findEnumValue(String enumValue) {
+      for(ConnectionFactoryProperty value : ConnectionFactoryProperty.values()) {
+        if(enumValue.equalsIgnoreCase(value.name()))
+          return value;
+      }
+      return null;
+    }
   }
   
   public AdvancedRabbitMqJmsImplementation() {
@@ -177,7 +185,12 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
   private void applyConnectionFactoryProperties(RMQConnectionFactory connectionFactory, KeyValuePairSet connectionFactoryProperties2) throws CoreException {
     for (KeyValuePair kvp : this.getConnectionFactoryProperties().getKeyValuePairs()) {
       try {
-        ConnectionFactoryProperties.valueOf(kvp.getKey()).apply(connectionFactory, kvp.getValue());
+        ConnectionFactoryProperty foundEnum = ConnectionFactoryProperty.findEnumValue(kvp.getKey());
+        if(foundEnum != null)
+          foundEnum.apply(connectionFactory, kvp.getValue());
+        else 
+          log.warn("Connection factory property {} not found, ignoring.", kvp.getKey());
+        
       } catch(Exception ex) {
         throw new CoreException(ex);
       }
