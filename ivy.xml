@@ -39,6 +39,8 @@
     <dependency org="org.apache.qpid" name="proton-jms" rev="0.12.1" conf="compile->default"/>
     <dependency org="org.apache.qpid" name="proton-j" rev="0.12.1" conf="compile->default"/>
 
+	<dependency org="com.rabbitmq.jms" name="rabbitmq-jms" rev="1.6.0" conf="compile->default"/>
+	<dependency org="com.rabbitmq" name="amqp-client" rev="4.0.2" conf="compile->default"/>
 
     <dependency org="org.apache.velocity" name="velocity" rev="1.7" transitive="false" conf="compile->default"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="1.7.12" conf="compile->default" />
