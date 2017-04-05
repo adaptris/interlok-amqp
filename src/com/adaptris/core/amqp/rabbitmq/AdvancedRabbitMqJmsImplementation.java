@@ -19,16 +19,15 @@ import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * AMQP 1.0 implementation of {@link VendorImplementation} using RabbitMQ.
+ * AMQP 0.9.1 implementation of {@link VendorImplementation} using RabbitMQ.
  * 
  * <p>
- * All available connection factory properties are exposed. If you
- * configure a username and password on the wrapping {@link JmsConnection} in which case
- * {@link ConnectionFactory#createConnection(String, String)} is used when creating the connection
- * otherwise {@link ConnectionFactory#createConnection()} will be used.
+ * All available connection factory properties are exposed. If you configure a username and password on the wrapping
+ * {@link JmsConnection} in which case {@link ConnectionFactory#createConnection(String, String)} is used when creating the
+ * connection otherwise {@link ConnectionFactory#createConnection()} will be used.
  * </p>
  * <p>
- * This was built against {@code com.rabbitmq.jms:rabbitmq-jms:1.6.0} and {@code com.rabbitmq:amqp-client:4.0.2} 
+ * This was built against {@code com.rabbitmq.jms:rabbitmq-jms:1.6.0} and {@code com.rabbitmq:amqp-client:4.0.2}
  * </p>
  * 
  * @config rabbitmq-advanced-jms-implementation
