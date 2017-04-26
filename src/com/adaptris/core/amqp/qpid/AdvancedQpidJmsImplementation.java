@@ -28,7 +28,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * used.
  * </p>
  * <p>
- * This was built against {@code org.apache.qpid:qpid-jms-client:0.8.0}
+ * This was built against {@code org.apache.qpid:qpid-jms-client:0.8.0}. This vendor implementation doesn't appear to be usable with
+ * Azure AMQP
  * </p>
  * 
  * @config qpid-advanced-jms-implementation

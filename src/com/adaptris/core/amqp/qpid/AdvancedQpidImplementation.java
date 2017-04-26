@@ -41,14 +41,13 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * method; unmatched properties are ignored and property keys are not case sensitive
  * </p>
  * <p>
- * This was built against {@code org.apache.qpid:qpid-amqp-1-0-client-jms:0.32}
+ * This was built against {@code org.apache.qpid:qpid-amqp-1-0-client-jms:0.32}. This vendor implementation is suitable for use with
+ * Azure AMQP
  * </p>
  * 
  * @config qpid-advanced-amqp-implementation
- * @deprecated since 3.0.3 use {@link AdvancedQpidJmsImplementation} instead for AMQP 1.0
  */
 @XStreamAlias("qpid-advanced-amqp-implementation")
-@Deprecated
 public class AdvancedQpidImplementation extends BasicQpidImplementation {
 
   /**

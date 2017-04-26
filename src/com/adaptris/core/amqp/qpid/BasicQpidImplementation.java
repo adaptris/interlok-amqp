@@ -21,14 +21,13 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * otherwise {@link ConnectionFactory#createConnection()} will be used.
  * </p>
  * <p>
- * This was built against {@code org.apache.qpid:qpid-amqp-1-0-client-jms:0.32}
+ * This was built against {@code org.apache.qpid:qpid-amqp-1-0-client-jms:0.32}. This vendor implementation is suitable for use with
+ * Azure AMQP
  * </p>
  * 
  * @config qpid-basic-amqp-implementation
- * @deprecated since 3.0.3 use {@link BasicQpidJmsImplementation} instead for AMQP 1.0
  */
 @XStreamAlias("qpid-basic-amqp-implementation")
-@Deprecated
 public class BasicQpidImplementation extends UrlVendorImplementation {
 
   ConnectionFactoryImpl createQpidConnectionFactory() throws JMSException {
