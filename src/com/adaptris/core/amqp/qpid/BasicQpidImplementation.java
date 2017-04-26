@@ -21,8 +21,13 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * otherwise {@link ConnectionFactory#createConnection()} will be used.
  * </p>
  * <p>
- * This was built against {@code org.apache.qpid:qpid-amqp-1-0-client-jms:0.32}. This vendor implementation is suitable for use with
- * Azure AMQP
+ * This vendor implementation is suitable for use with Azure AMQP. If you are using topics then it must be a durable subscriber
+ * where the subscriptionID is the same as the subscription created in the Azure portal; the topic name should be
+ * {@code [topic-name]/subscriptions/[subscriptionID]}. Your mileage may vary but during testing this was the the only destination
+ * configuration that seemed to work.
+ * </p>
+ * <p>
+ * This was built against {@code org.apache.qpid:qpid-amqp-1-0-client-jms:0.32}.
  * </p>
  * 
  * @config qpid-basic-amqp-implementation
