@@ -169,15 +169,13 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
   }
   
   @Override
-  public ConnectionFactory createConnectionFactory() throws JMSException {
-    RMQConnectionFactory connectionFactory = new RMQConnectionFactory();
-    
+  public RMQConnectionFactory createConnectionFactory() throws JMSException {
+    RMQConnectionFactory connectionFactory = super.createConnectionFactory();
     try {
       this.applyConnectionFactoryProperties(connectionFactory, this.getConnectionFactoryProperties());
     } catch (CoreException e) {
       throw new JMSException(e.getMessage());
     }
-    
     return connectionFactory;
   }
 

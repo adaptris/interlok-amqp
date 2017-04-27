@@ -29,9 +29,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 public class BasicRabbitMqJmsImplementation extends UrlVendorImplementation {
 
   @Override
-  public ConnectionFactory createConnectionFactory() throws JMSException {
-    RMQConnectionFactory connectionFactory;
-    connectionFactory = new RMQConnectionFactory();
+  public RMQConnectionFactory createConnectionFactory() throws JMSException {
+    RMQConnectionFactory connectionFactory = new RMQConnectionFactory();
     connectionFactory.setUri(this.getBrokerUrl());
     return connectionFactory;
   }
