@@ -28,10 +28,13 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("rabbitmq-basic-jms-implementation")
 public class BasicRabbitMqJmsImplementation extends UrlVendorImplementation {
 
+  protected static final int DEFAULT_OM_TIMEOUT = 60000;
+
   @Override
   public RMQConnectionFactory createConnectionFactory() throws JMSException {
     RMQConnectionFactory connectionFactory = new RMQConnectionFactory();
     connectionFactory.setUri(this.getBrokerUrl());
+    connectionFactory.setOnMessageTimeoutMs(DEFAULT_OM_TIMEOUT);
     return connectionFactory;
   }
 
