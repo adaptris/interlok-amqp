@@ -28,7 +28,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * used.
  * </p>
  * <p>
- * This was built against {@code org.apache.qpid:qpid-jms-client:0.8.0}
+ * This was built against {@code org.apache.qpid:qpid-jms-client:0.8.0}. This vendor implementation doesn't appear to be usable with
+ * Azure AMQP as is unless you follow the notes on <a href=
+ * "http://stackoverflow.com/questions/40281205/how-can-i-send-receive-a-message-from-azure-service-bus-from-qpid-jms-qpid-jms">stack
+ * overflow</a>
  * </p>
  * 
  * @config qpid-advanced-jms-implementation

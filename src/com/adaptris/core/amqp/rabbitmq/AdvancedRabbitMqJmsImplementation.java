@@ -40,29 +40,47 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
   @AutoPopulated
   private KeyValuePairSet connectionFactoryProperties;
   
-  private enum ConnectionFactoryProperty {
+  /**
+   * Connection Properties that map to {@code RMQConnectionFactory} setters.
+   * 
+   *
+   */
+  public enum ConnectionFactoryProperty {
     
+    /**
+     * {@code RMQConnectionFactory.setChannelQos(int)}
+     * 
+     */
     Channel_QoS {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
         connectionFactory.setChannelsQos(Integer.parseInt(value));
       }
     } ,
-    
+    /**
+     * {@code RMQConnectionFactory.setHost(String)}
+     * 
+     */
     Host {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
         connectionFactory.setHost(value);
       }
     } ,
-    
+    /**
+     * {@code RMQConnectionFactory.setOnMessageTimeoutMs(int)}
+     * 
+     */
     OnMessageTimeoutMs {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
         connectionFactory.setOnMessageTimeoutMs(Integer.parseInt(value));
       }
     } ,
-   
+    /**
+     * {@code RMQConnectionFactory.setPassword(String)}, may be encoded.
+     * 
+     */
     Password {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
@@ -73,21 +91,30 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
         }
       }
     } ,
-    
+    /**
+     * {@code RMQConnectionFactory.setPort(int)}
+     * 
+     */
     Port {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
         connectionFactory.setPort(Integer.parseInt(value));
       }
     } ,
-    
+    /**
+     * {@code RMQConnectionFactory.setQueueBrowserReadMax(int)}
+     * 
+     */
     QueueBrowserReadMax {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
         connectionFactory.setQueueBrowserReadMax(Integer.parseInt(value));
       }
     } ,
-    
+    /**
+     * {@code RMQConnectionFactory.useSslProtocol()}
+     * 
+     */
     Ssl {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
@@ -99,14 +126,20 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
           }
       }
     } ,
-    
+    /**
+     * {@code RMQConnectionFactory.useSslProtocol(String)}
+     * 
+     */
     UseSslProtocol {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
         connectionFactory.useSslProtocol(value);
       }
     } ,
-    
+    /**
+     * {@code RMQConnectionFactory.setTerminationTimeout(long)}
+     * 
+     */
     TerminationTimeout {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
@@ -114,13 +147,20 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
       }
     } ,
     
+    /**
+     * Comma separated list of packages for {@code RMQConnectionFactory.setTrustedPackages(List<String>)}
+     * 
+     */
     TrustedPackages {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
         connectionFactory.setTrustedPackages(Arrays.asList(value.split(",")));
       }
     } ,
-    
+    /**
+     * {@code RMQConnectionFactory.setUri(String)}
+     * 
+     */
     Uri {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
@@ -131,21 +171,30 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
         }
       }
     } ,
-    
+    /**
+     * {@code RMQConnectionFactory.setUseDefaultSslContext(boolean)}
+     * 
+     */
     UseDefaultSslContext {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
         connectionFactory.setUseDefaultSslContext(Boolean.getBoolean(value));
       }
     } ,
-    
+    /**
+     * {@code RMQConnectionFactory.setUsername(String)}
+     * 
+     */
     Username {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
         connectionFactory.setUsername(value);
       }
     } ,
-    
+    /**
+     * {@code RMQConnectionFactory.setVirtualHost(String)}
+     * 
+     */
     VirtualHost {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
@@ -169,15 +218,13 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
   }
   
   @Override
-  public ConnectionFactory createConnectionFactory() throws JMSException {
-    RMQConnectionFactory connectionFactory = new RMQConnectionFactory();
-    
+  public RMQConnectionFactory createConnectionFactory() throws JMSException {
+    RMQConnectionFactory connectionFactory = super.createConnectionFactory();
     try {
       this.applyConnectionFactoryProperties(connectionFactory, this.getConnectionFactoryProperties());
     } catch (CoreException e) {
       throw new JMSException(e.getMessage());
     }
-    
     return connectionFactory;
   }
 
