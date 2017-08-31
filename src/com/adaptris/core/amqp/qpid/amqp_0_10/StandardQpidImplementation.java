@@ -22,9 +22,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * This was built against {@code org.apache.qpid:qpid-client:6.0.1}
  * </p>
  * 
- * @config 0-10-qpid-implementation
+ * @config qpid-implementation-0-10
  */
-@XStreamAlias("0-10-qpid-implementation")
+@XStreamAlias("qpid-implementation-0-10")
 public class StandardQpidImplementation extends UrlVendorImplementation {
 
   AMQConnectionFactory createQpidConnectionFactory() throws JMSException {
