@@ -7,14 +7,20 @@ import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.BooleanUtils;
+
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.jms.JmsConnection;
+import com.adaptris.core.jms.JmsUtils;
 import com.adaptris.core.jms.VendorImplementation;
 import com.adaptris.core.jms.VendorImplementationBase;
+import com.adaptris.core.util.Args;
+import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.security.exc.PasswordException;
 import com.adaptris.util.KeyValuePair;
 import com.adaptris.util.KeyValuePairSet;
+import com.adaptris.util.SimpleBeanUtil;
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -26,6 +32,14 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * {@link JmsConnection} in which case {@link ConnectionFactory#createConnection(String, String)} is used when creating the
  * connection otherwise {@link ConnectionFactory#createConnection()} will be used.
  * </p>
+ * <p>
+ * The enum values from {@link ConnectionFactoryProperty} are matched on a case insensitve basis against the keys in
+ * {@link #getConnectionFactoryProperties()} when configuring the {@code RMQConnectionFactory}. In the event that a key does not
+ * match one the enums, an attempt will be made to invoke (via reflection) the implied setter with the configured value (e.g.
+ * {@code DnsServer=a.b.c.d} would cause {@code setDnsServer("a.b.c.d")} to be invoked if it exists as a method on
+ * {@code RMQConnectionFactory}).
+ * </p>
+ * 
  * <p>
  * This was built against {@code com.rabbitmq.jms:rabbitmq-jms:1.6.0} and {@code com.rabbitmq:amqp-client:4.0.2}
  * </p>
@@ -42,13 +56,21 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
   
   /**
    * Connection Properties that map to {@code RMQConnectionFactory} setters.
-   * 
-   *
    */
   public enum ConnectionFactoryProperty {
     
     /**
-     * {@code RMQConnectionFactory.setChannelQos(int)}
+     * Maps to {@code RMQConnectionFactory.setChannelQos(int)}
+     * 
+     */
+    ChannelQoS {
+      @Override
+      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
+        connectionFactory.setChannelsQos(Integer.parseInt(value));
+      }
+    },
+    /**
+     * Maps to {@code RMQConnectionFactory.setChannelQos(int)}
      * 
      */
     Channel_QoS {
@@ -58,7 +80,7 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
       }
     } ,
     /**
-     * {@code RMQConnectionFactory.setHost(String)}
+     * Maps to {@code RMQConnectionFactory.setHost(String)}
      * 
      */
     Host {
@@ -68,7 +90,7 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
       }
     } ,
     /**
-     * {@code RMQConnectionFactory.setOnMessageTimeoutMs(int)}
+     * Maps to {@code RMQConnectionFactory.setOnMessageTimeoutMs(int)}
      * 
      */
     OnMessageTimeoutMs {
@@ -78,7 +100,7 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
       }
     } ,
     /**
-     * {@code RMQConnectionFactory.setPassword(String)}, may be encoded.
+     * Maps to {@code RMQConnectionFactory.setPassword(String)}, may be encoded.
      * 
      */
     Password {
@@ -87,12 +109,12 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
         try {
           connectionFactory.setPassword(com.adaptris.security.password.Password.decode(value));
         } catch (PasswordException e) {
-          throw new CoreException(e);
+          throw ExceptionHelper.wrapCoreException(e);
         }
       }
     } ,
     /**
-     * {@code RMQConnectionFactory.setPort(int)}
+     * Maps to {@code RMQConnectionFactory.setPort(int)}
      * 
      */
     Port {
@@ -102,7 +124,7 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
       }
     } ,
     /**
-     * {@code RMQConnectionFactory.setQueueBrowserReadMax(int)}
+     * Maps to {@code RMQConnectionFactory.setQueueBrowserReadMax(int)}
      * 
      */
     QueueBrowserReadMax {
@@ -112,22 +134,24 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
       }
     } ,
     /**
-     * {@code RMQConnectionFactory.useSslProtocol()}
+     * Maps to {@code RMQConnectionFactory.useSslProtocol()}
      * 
      */
     Ssl {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        if(Boolean.getBoolean(value))
+        if (BooleanUtils.toBoolean(value)) {
           try {
             connectionFactory.useSslProtocol();
-          } catch (NoSuchAlgorithmException e) {
-            throw new CoreException(e);
           }
+          catch (NoSuchAlgorithmException e) {
+            throw ExceptionHelper.wrapCoreException(e);
+          }
+        }
       }
     } ,
     /**
-     * {@code RMQConnectionFactory.useSslProtocol(String)}
+     * Maps to {@code RMQConnectionFactory.useSslProtocol(String)}
      * 
      */
     UseSslProtocol {
@@ -137,7 +161,7 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
       }
     } ,
     /**
-     * {@code RMQConnectionFactory.setTerminationTimeout(long)}
+     * Maps to {@code RMQConnectionFactory.setTerminationTimeout(long)}
      * 
      */
     TerminationTimeout {
@@ -148,7 +172,7 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
     } ,
     
     /**
-     * Comma separated list of packages for {@code RMQConnectionFactory.setTrustedPackages(List<String>)}
+     * Maps to Comma separated list of packages for {@code RMQConnectionFactory.setTrustedPackages(List<String>)}
      * 
      */
     TrustedPackages {
@@ -158,7 +182,7 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
       }
     } ,
     /**
-     * {@code RMQConnectionFactory.setUri(String)}
+     * Maps to {@code RMQConnectionFactory.setUri(String)}
      * 
      */
     Uri {
@@ -172,17 +196,17 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
       }
     } ,
     /**
-     * {@code RMQConnectionFactory.setUseDefaultSslContext(boolean)}
+     * Maps to {@code RMQConnectionFactory.setUseDefaultSslContext(boolean)}
      * 
      */
     UseDefaultSslContext {
       @Override
       public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        connectionFactory.setUseDefaultSslContext(Boolean.getBoolean(value));
+        connectionFactory.setUseDefaultSslContext(BooleanUtils.toBoolean(value));
       }
     } ,
     /**
-     * {@code RMQConnectionFactory.setUsername(String)}
+     * Maps to {@code RMQConnectionFactory.setUsername(String)}
      * 
      */
     Username {
@@ -192,7 +216,7 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
       }
     } ,
     /**
-     * {@code RMQConnectionFactory.setVirtualHost(String)}
+     * Maps to {@code RMQConnectionFactory.setVirtualHost(String)}
      * 
      */
     VirtualHost {
@@ -204,13 +228,6 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
     
     public abstract void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException;
     
-    public static ConnectionFactoryProperty findEnumValue(String enumValue) {
-      for(ConnectionFactoryProperty value : ConnectionFactoryProperty.values()) {
-        if(enumValue.equalsIgnoreCase(value.name()))
-          return value;
-      }
-      return null;
-    }
   }
   
   public AdvancedRabbitMqJmsImplementation() {
@@ -220,27 +237,32 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
   @Override
   public RMQConnectionFactory createConnectionFactory() throws JMSException {
     RMQConnectionFactory connectionFactory = super.createConnectionFactory();
-    try {
-      this.applyConnectionFactoryProperties(connectionFactory, this.getConnectionFactoryProperties());
-    } catch (CoreException e) {
-      throw new JMSException(e.getMessage());
-    }
-    return connectionFactory;
+    return applyConnectionFactoryProperties(connectionFactory);
   }
 
-  private void applyConnectionFactoryProperties(RMQConnectionFactory connectionFactory, KeyValuePairSet connectionFactoryProperties2) throws CoreException {
-    for (KeyValuePair kvp : this.getConnectionFactoryProperties().getKeyValuePairs()) {
-      try {
-        ConnectionFactoryProperty foundEnum = ConnectionFactoryProperty.findEnumValue(kvp.getKey());
-        if(foundEnum != null)
-          foundEnum.apply(connectionFactory, kvp.getValue());
-        else 
-          log.warn("Connection factory property {} not found, ignoring.", kvp.getKey());
-        
-      } catch(Exception ex) {
-        throw new CoreException(ex);
+  private RMQConnectionFactory applyConnectionFactoryProperties(RMQConnectionFactory connectionFactory) throws JMSException {
+    try {
+      for (KeyValuePair kvp : getConnectionFactoryProperties().getKeyValuePairs()) {
+        boolean matched = false;
+        for (ConnectionFactoryProperty sp : ConnectionFactoryProperty.values()) {
+          if (sp.name().equalsIgnoreCase(kvp.getKey())) {
+            sp.apply(connectionFactory, kvp.getValue());
+            matched = true;
+            break;
+          }
+        }
+        if (!matched) {
+          if (!SimpleBeanUtil.callSetter(connectionFactory, "set" + kvp.getKey(), kvp.getValue())) {
+            log.trace("Ignoring unsupported Property {}", kvp.getKey());
+          }
+        }
       }
     }
+    catch (CoreException e) {
+      throw JmsUtils.wrapJMSException(e);
+
+    }
+    return connectionFactory;
   }
 
   @Override
@@ -252,8 +274,15 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
     return connectionFactoryProperties;
   }
 
-  public void setConnectionFactoryProperties(KeyValuePairSet connectionFactoryProperties) {
-    this.connectionFactoryProperties = connectionFactoryProperties;
+  /**
+   * Set any additional properties that are required on the {@code RMQConnectionFactory}.
+   * 
+   * 
+   * @param properties
+   * @see ConnectionFactoryProperty
+   */
+  public void setConnectionFactoryProperties(KeyValuePairSet properties) {
+    this.connectionFactoryProperties = Args.notNull(properties, "connectionFactoryProperties");
   }
 
 }
