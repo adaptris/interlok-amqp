@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
-  <info organisation="com.adaptris" module="adp-amqp" revision="${ivy.publish.revision}" status="release"/>
+  <info organisation="com.adaptris" module="interlok-amqp" revision="${ivy.publish.revision}" status="release"/>
 
   <configurations>
     <conf name="default" visibility="public" description="runtime dependencies and master artifact can be used with this conf" extends="runtime,master"/>
@@ -19,8 +19,8 @@
   </configurations>
 
   <publications>
-     <artifact name="adp-amqp" type="jar" ext="jar"/>
-     <artifact name="adp-amqp" type="pom" ext="pom"/>
+     <artifact name="interlok-amqp" type="jar" ext="jar"/>
+     <artifact name="interlok-amqp" type="pom" ext="pom"/>
 
 
      <artifact type="javadoc" ext="jar" conf="javadoc" m:classifier="javadoc"/>
@@ -28,10 +28,10 @@
   </publications>
 
   <dependencies>
-    <dependency org="com.adaptris" name="adp-core" rev="${adp-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
-    <dependency org="com.adaptris" name="interlok-common" rev="${adp-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
-    <dependency org="com.adaptris" name="adp-stubs" rev="${adp-core-version}" changing="true" conf="test->default"/>
-    <dependency org="com.adaptris" name="adp-core-apt" rev="${adp-core-version}" conf="compile->default;ant->default" changing="true"/>
+    <dependency org="com.adaptris" name="interlok-core" rev="${interlok-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
+    <dependency org="com.adaptris" name="interlok-common" rev="${interlok-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
+    <dependency org="com.adaptris" name="interlok-stubs" rev="${interlok-core-version}" changing="true" conf="test->default"/>
+    <dependency org="com.adaptris" name="interlok-core-apt" rev="${interlok-core-version}" conf="compile->default;ant->default" changing="true"/>
 
     <dependency org="com.thoughtworks.xstream" name="xstream" rev="1.4.7"  conf="compile->default"  transitive="false"/>
     <dependency org="org.apache.geronimo.specs" name="geronimo-jms_1.1_spec" rev="1.1.1" conf="test->default"/>
