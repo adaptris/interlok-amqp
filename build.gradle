@@ -83,9 +83,9 @@ dependencies {
   compile ("org.apache.qpid:proton-j:0.28.1")
 
   compile ("com.rabbitmq.jms:rabbitmq-jms:1.9.0")
-  compile ("com.rabbitmq:amqp-client:4.0.2")
+  compile ("com.rabbitmq:amqp-client:5.3.0")
 
-  annotationProcessor ("com.adaptris:interlok-common:$interlokCoreVersion") {changing= true}
+  annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
   umlDoclet("nl.talsmasoftware:umldoclet:1.0.18")
 
   testCompile ('junit:junit:4.12')
@@ -101,6 +101,7 @@ dependencies {
   testCompile("org.apache.activemq:activemq-amqp:5.15.4")
   testCompile("org.apache.activemq.protobuf:activemq-protobuf:1.1")
   testCompile("org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1")
+  testCompile("io.netty:netty-all:4.1.28.Final")
 
   javadoc("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
 
