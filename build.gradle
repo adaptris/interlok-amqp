@@ -82,7 +82,7 @@ dependencies {
   compile ("org.apache.qpid:proton-jms:0.12.2")
   compile ("org.apache.qpid:proton-j:0.28.1")
 
-  compile ("com.rabbitmq.jms:rabbitmq-jms:1.6.0")
+  compile ("com.rabbitmq.jms:rabbitmq-jms:1.9.0")
   compile ("com.rabbitmq:amqp-client:4.0.2")
 
   annotationProcessor ("com.adaptris:interlok-common:$interlokCoreVersion") {changing= true}
