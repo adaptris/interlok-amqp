@@ -14,6 +14,7 @@ ext {
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
   slf4jVersion = '1.7.25'
+  activeMqVersion= '5.15.5'
 }
 
 ext.hasGraphViz = { ->
@@ -95,10 +96,10 @@ dependencies {
   testCompile ("org.apache.logging.log4j:log4j-slf4j-impl:2.8.1")
   testCompile ("org.apache.logging.log4j:log4j-api:2.8.1")
   testCompile ("org.mockito:mockito-all:1.10.19")
-  testCompile("org.apache.activemq:activemq-client:5.15.4")
-  testCompile("org.apache.activemq:activemq-jaas:5.15.4")
-  testCompile("org.apache.activemq:activemq-kahadb-store:5.15.4")
-  testCompile("org.apache.activemq:activemq-amqp:5.15.4")
+  testCompile("org.apache.activemq:activemq-client:$activeMqVersion")
+  testCompile("org.apache.activemq:activemq-jaas:$activeMqVersion")
+  testCompile("org.apache.activemq:activemq-kahadb-store:$activeMqVersion")
+  testCompile("org.apache.activemq:activemq-amqp:$activeMqVersion")
   testCompile("org.apache.activemq.protobuf:activemq-protobuf:1.1")
   testCompile("org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1")
   testCompile("io.netty:netty-all:4.1.28.Final")
