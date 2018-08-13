@@ -237,11 +237,13 @@ publishing {
       artifact sourcesJar { classifier "sources" }
 
       pom.withXml {
+        asNode().appendNode("name", componentName)
         asNode().appendNode("description", "Connect to a AMQP 0.9.0/1.0 Provider via JMS")
         def properties = asNode().appendNode("properties")
         properties.appendNode("target", "3.8.0+")
         properties.appendNode("tags", "amqp,jms")
         properties.appendNode("license", "false")
+        properties.appendNode("externalUrl", "https://www.amqp.org/")
       }
     }
   }
