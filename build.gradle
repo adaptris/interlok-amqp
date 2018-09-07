@@ -77,7 +77,7 @@ dependencies {
   compile ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
   compile ("org.slf4j:slf4j-api:$slf4jVersion")
 
-  compile ("org.apache.qpid:qpid-jms-client:0.35.0")
+  compile ("org.apache.qpid:qpid-jms-client:0.36.0")
   compile ("org.apache.qpid:qpid-amqp-1-0-client-jms:0.32")
   compile ("org.apache.qpid:qpid-client:6.3.2")
   compile ("org.apache.qpid:proton-jms:0.12.2")
