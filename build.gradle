@@ -15,7 +15,7 @@ ext {
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
   slf4jVersion = '1.7.25'
-  activeMqVersion= '5.15.5'
+  activeMqVersion= '5.15.6'
   log4j2Version = '2.8.1'
 }
 
@@ -79,11 +79,11 @@ dependencies {
   compile ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
   compile ("org.slf4j:slf4j-api:$slf4jVersion")
 
-  compile ("org.apache.qpid:qpid-jms-client:0.35.0")
+  compile ("org.apache.qpid:qpid-jms-client:0.36.0")
   compile ("org.apache.qpid:qpid-amqp-1-0-client-jms:0.32")
-  compile ("org.apache.qpid:qpid-client:6.3.2")
+  compile ("org.apache.qpid:qpid-client:6.3.3")
   compile ("org.apache.qpid:proton-jms:0.12.2")
-  compile ("org.apache.qpid:proton-j:0.28.1")
+  compile ("org.apache.qpid:proton-j:0.29.0")
 
   compile ("com.rabbitmq.jms:rabbitmq-jms:1.9.0")
   compile ("com.rabbitmq:amqp-client:5.4.1")
@@ -104,7 +104,7 @@ dependencies {
   testCompile("org.apache.activemq:activemq-amqp:$activeMqVersion")
   testCompile("org.apache.activemq.protobuf:activemq-protobuf:1.1")
   testCompile("org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1")
-  testCompile("io.netty:netty-all:4.1.28.Final")
+  testCompile("io.netty:netty-all:4.1.29.Final")
 
   javadoc("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
 
