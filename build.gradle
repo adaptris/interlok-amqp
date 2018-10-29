@@ -15,7 +15,7 @@ ext {
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
   slf4jVersion = '1.7.25'
-  activeMqVersion= '5.15.6'
+  activeMqVersion= '5.15.7'
   log4j2Version = '2.8.1'
 }
 
