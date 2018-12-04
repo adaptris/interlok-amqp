@@ -86,7 +86,7 @@ dependencies {
   compile ("org.apache.qpid:qpid-amqp-1-0-client-jms:0.32")
   compile ("org.apache.qpid:qpid-client:6.3.3")
   compile ("org.apache.qpid:proton-jms:0.12.2")
-  compile ("org.apache.qpid:proton-j:0.30.0")
+  compile ("org.apache.qpid:proton-j:0.31.0")
 
   compile ("com.rabbitmq.jms:rabbitmq-jms:1.11.0")
   compile ("com.rabbitmq:amqp-client:5.5.1")
