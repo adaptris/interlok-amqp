@@ -3,6 +3,7 @@ package com.adaptris.core.amqp.qpid;
 import javax.jms.JMSException;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl;
 
 import com.adaptris.annotation.AutoPopulated;
@@ -83,7 +84,7 @@ public class AdvancedQpidImplementation extends BasicQpidImplementation {
     UseBinaryMessageId {
       @Override
       void applyProperty(ConnectionFactoryImpl cf, String o) {
-        cf.setUseBinaryMessageId(Boolean.valueOf(o));
+        cf.setUseBinaryMessageId(BooleanUtils.toBoolean(o));
       }
     },
     /**
@@ -92,7 +93,7 @@ public class AdvancedQpidImplementation extends BasicQpidImplementation {
     SyncPublish {
       @Override
       void applyProperty(ConnectionFactoryImpl cf, String o) {
-        cf.setSyncPublish(Boolean.valueOf(o));
+        cf.setSyncPublish(BooleanUtils.toBoolean(o));
       }
     },
     /**
@@ -101,7 +102,7 @@ public class AdvancedQpidImplementation extends BasicQpidImplementation {
     MaxPrefetch {
       @Override
       void applyProperty(ConnectionFactoryImpl cf, String o) {
-        cf.setMaxPrefetch(Integer.valueOf(o));
+        cf.setMaxPrefetch(Integer.parseInt(o));
       }
     },
     /**
