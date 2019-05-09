@@ -91,7 +91,7 @@ dependencies {
   compile ("org.apache.qpid:proton-j:0.33.0")
 
   compile ("com.rabbitmq.jms:rabbitmq-jms:1.11.2")
-  compile ("com.rabbitmq:amqp-client:5.6.0")
+  compile ("com.rabbitmq:amqp-client:5.7.0")
 
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
   umlDoclet("nl.talsmasoftware:umldoclet:1.1.4")
