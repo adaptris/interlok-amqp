@@ -5,7 +5,9 @@ plugins {
   id 'maven-publish'
   id  "jacoco"
   id 'com.github.spotbugs' version '2.0.0'
+  id "io.freefair.lombok" version "3.8.4"
 }
+
 ext {
   interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '3.9-SNAPSHOT'
   releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '3.9-SNAPSHOT'
@@ -25,6 +27,7 @@ ext {
   slf4jVersion = '1.7.26'
   activeMqVersion= '5.15.9'
   log4j2Version = '2.12.0'
+  mockitoVersion = '3.0.0'  
 }
 
 ext.hasGraphViz = { ->
@@ -50,6 +53,7 @@ sourceCompatibility = 1.8
 group   = 'com.adaptris'
 version = releaseVersion
 def versionDir = "$buildDir/version"
+generateLombokConfig.enabled = false
 
 repositories {
   mavenCentral()
@@ -96,11 +100,13 @@ dependencies {
   umlDoclet("nl.talsmasoftware:umldoclet:1.1.4")
 
   testCompile ('junit:junit:4.12')
+  
   testCompile ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
   testCompile ("org.apache.logging.log4j:log4j-core:$log4j2Version")
   testCompile ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
   testCompile ("org.apache.logging.log4j:log4j-api:$log4j2Version")
-  testCompile ("org.mockito:mockito-all:1.10.19")
+  testCompile ("org.mockito:mockito-core:$mockitoVersion")
+  testCompile ("org.mockito:mockito-inline:$mockitoVersion")
   testCompile("org.apache.activemq:activemq-client:$activeMqVersion")
   testCompile("org.apache.activemq:activemq-jaas:$activeMqVersion")
   testCompile("org.apache.activemq:activemq-kahadb-store:$activeMqVersion")
