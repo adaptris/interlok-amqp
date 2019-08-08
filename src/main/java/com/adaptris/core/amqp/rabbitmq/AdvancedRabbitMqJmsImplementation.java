@@ -1,19 +1,13 @@
 package com.adaptris.core.amqp.rabbitmq;
 
 import java.util.Arrays;
-
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
-import javax.jms.Queue;
-import javax.jms.Topic;
 import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang.BooleanUtils;
-
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.Removal;
-import com.adaptris.core.jms.JmsActorConfig;
 import com.adaptris.core.jms.JmsConnection;
 import com.adaptris.core.jms.JmsUtils;
 import com.adaptris.core.jms.VendorImplementation;
@@ -23,7 +17,6 @@ import com.adaptris.util.SimpleBeanUtil;
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import com.rabbitmq.jms.admin.RMQDestination;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -76,7 +69,17 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
       public void apply(RMQConnectionFactory connectionFactory, String value) {
         applyConfiguration(() -> connectionFactory.setChannelsQos(Integer.parseInt(value)));
       }
-    } ,
+    },
+    /**
+     * Maps to {@code RMQConnectionFactory.setDeclareReplyToDestination(boolean)}
+     * 
+     */
+    DeclareReplyToDestination {
+      @Override
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() ->connectionFactory.setDeclareReplyToDestination(BooleanUtils.toBoolean(value)));
+      }
+    },
     /**
      * Maps to {@code RMQConnectionFactory.setHost(String)}
      * 
@@ -296,19 +299,8 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
   }
 
   @Override
-  public Queue createQueue(String name, JmsActorConfig c) throws JMSException {
-    if (amqpMode()) {
-      return new RMQDestination(name, getExchangeName(), getRoutingKey(), name);
-    }
-    return super.createQueue(name, c);
-  }
-
-  @Override
-  public Topic createTopic(String name, JmsActorConfig c) throws JMSException {
-    if (amqpMode()) {
-      return new RMQDestination(name, getExchangeName(), getRoutingKey(), name);
-    }
-    return super.createTopic(name, c);
+  protected RMQDestinationBuilder builder() {
+    return (name) -> new RMQDestination(name, getExchangeName(), getRoutingKey(), name);
   }
 
   private static RuntimeException asRuntimeException(Exception e) {

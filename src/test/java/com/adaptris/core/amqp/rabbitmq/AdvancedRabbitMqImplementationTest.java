@@ -1,10 +1,7 @@
 package com.adaptris.core.amqp.rabbitmq;
 import static org.junit.Assert.assertNotNull;
-
 import javax.jms.JMSException;
-
 import org.junit.Test;
-
 import com.adaptris.core.amqp.rabbitmq.AdvancedRabbitMqJmsImplementation.ConnectionFactoryProperty;
 import com.adaptris.util.KeyValuePair;
 
@@ -40,6 +37,7 @@ public class AdvancedRabbitMqImplementationTest extends BasicRabbitMqImplementat
     mq.getConnectionFactoryProperties().add(new KeyValuePair(ConnectionFactoryProperty.UseDefaultSslContext.name(), "true"));
     mq.getConnectionFactoryProperties().add(new KeyValuePair(ConnectionFactoryProperty.Username.name(), "admin"));
     mq.getConnectionFactoryProperties().add(new KeyValuePair(ConnectionFactoryProperty.VirtualHost.name(), "vhost"));
+    mq.getConnectionFactoryProperties().add(new KeyValuePair(ConnectionFactoryProperty.DeclareReplyToDestination.name(), "false"));
     // This is a property that's not in the enum, and with no setSomethingElse method.
     mq.getConnectionFactoryProperties().add(new KeyValuePair("SomethingElse", "amqp://localhost:5672"));
     // This is a property that's not in the enum, but does exist as a setter.
