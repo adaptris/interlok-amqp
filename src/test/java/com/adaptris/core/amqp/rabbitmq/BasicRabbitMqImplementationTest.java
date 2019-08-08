@@ -6,16 +6,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.Topic;
-
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.adaptris.core.jms.JmsActorConfig;
 import com.adaptris.core.jms.activemq.BasicActiveMqImplementation;
 import com.rabbitmq.jms.admin.RMQDestination;
@@ -85,4 +82,5 @@ public class BasicRabbitMqImplementationTest {
     Mockito.when(session.createTopic(any())).thenReturn(topic);
     return config;
   }
+
 }
