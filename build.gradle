@@ -24,7 +24,7 @@ ext {
   componentName='Interlok/AMQP'
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '1.7.27'
+  slf4jVersion = '1.7.28'
   activeMqVersion= '5.15.9'
   log4j2Version = '2.12.1'
   mockitoVersion = '3.0.0'  
