@@ -5,7 +5,9 @@ plugins {
   id 'maven-publish'
   id  "jacoco"
   id 'com.github.spotbugs' version '2.0.0'
+  id "io.freefair.lombok" version "3.8.4"
 }
+
 ext {
   interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '3.9-SNAPSHOT'
   releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '3.9-SNAPSHOT'
@@ -22,9 +24,10 @@ ext {
   componentName='Interlok/AMQP'
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '1.7.26'
+  slf4jVersion = '1.7.27'
   activeMqVersion= '5.15.9'
-  log4j2Version = '2.11.2'
+  log4j2Version = '2.12.1'
+  mockitoVersion = '3.0.0'  
 }
 
 ext.hasGraphViz = { ->
@@ -50,6 +53,7 @@ sourceCompatibility = 1.8
 group   = 'com.adaptris'
 version = releaseVersion
 def versionDir = "$buildDir/version"
+generateLombokConfig.enabled = false
 
 repositories {
   mavenCentral()
@@ -83,24 +87,26 @@ dependencies {
   compile ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
   compile ("org.slf4j:slf4j-api:$slf4jVersion")
 
-  compile ("org.apache.qpid:qpid-jms-client:0.43.0")
+  compile ("org.apache.qpid:qpid-jms-client:0.44.0")
   compile ("org.apache.qpid:qpid-amqp-1-0-client-jms:0.32")
   compile ("org.apache.qpid:qpid-client:6.3.4")
   compile ("org.apache.qpid:proton-jms:0.12.2")
   compile ("org.apache.qpid:proton-j:0.33.1")
 
-  compile ("com.rabbitmq.jms:rabbitmq-jms:1.11.2")
-  compile ("com.rabbitmq:amqp-client:5.7.1")
+  compile ("com.rabbitmq.jms:rabbitmq-jms:1.12.0")
+  compile ("com.rabbitmq:amqp-client:5.7.3")
 
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
   umlDoclet("nl.talsmasoftware:umldoclet:1.1.4")
 
   testCompile ('junit:junit:4.12')
+  
   testCompile ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
   testCompile ("org.apache.logging.log4j:log4j-core:$log4j2Version")
   testCompile ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
   testCompile ("org.apache.logging.log4j:log4j-api:$log4j2Version")
-  testCompile ("org.mockito:mockito-all:1.10.19")
+  testCompile ("org.mockito:mockito-core:$mockitoVersion")
+  testCompile ("org.mockito:mockito-inline:$mockitoVersion")
   testCompile("org.apache.activemq:activemq-client:$activeMqVersion")
   testCompile("org.apache.activemq:activemq-jaas:$activeMqVersion")
   testCompile("org.apache.activemq:activemq-kahadb-store:$activeMqVersion")

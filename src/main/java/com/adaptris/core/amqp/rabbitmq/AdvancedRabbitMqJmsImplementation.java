@@ -1,28 +1,25 @@
 package com.adaptris.core.amqp.rabbitmq;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang.BooleanUtils;
-
+import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.AutoPopulated;
-import com.adaptris.core.CoreException;
+import com.adaptris.annotation.Removal;
 import com.adaptris.core.jms.JmsConnection;
 import com.adaptris.core.jms.JmsUtils;
 import com.adaptris.core.jms.VendorImplementation;
-import com.adaptris.core.jms.VendorImplementationBase;
-import com.adaptris.core.util.Args;
-import com.adaptris.core.util.ExceptionHelper;
-import com.adaptris.security.exc.PasswordException;
 import com.adaptris.util.KeyValuePair;
 import com.adaptris.util.KeyValuePairSet;
 import com.adaptris.util.SimpleBeanUtil;
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
+import com.rabbitmq.jms.admin.RMQDestination;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 
 /**
  * AMQP 0.9.1 implementation of {@link VendorImplementation} using RabbitMQ.
@@ -40,19 +37,13 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * {@code RMQConnectionFactory}).
  * </p>
  * 
- * <p>
- * This was built against {@code com.rabbitmq.jms:rabbitmq-jms:1.6.0} and {@code com.rabbitmq:amqp-client:4.0.2}
- * </p>
  * 
  * @config rabbitmq-advanced-jms-implementation
  * @since 3.6.0
  */
 @XStreamAlias("rabbitmq-advanced-jms-implementation")
 public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplementation {
-  
-  @NotNull
-  @AutoPopulated
-  private KeyValuePairSet connectionFactoryProperties;
+
   
   /**
    * Connection Properties that map to {@code RMQConnectionFactory} setters.
@@ -65,8 +56,8 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
      */
     ChannelQoS {
       @Override
-      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        connectionFactory.setChannelsQos(Integer.parseInt(value));
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() -> connectionFactory.setChannelsQos(Integer.parseInt(value)));
       }
     },
     /**
@@ -75,18 +66,28 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
      */
     Channel_QoS {
       @Override
-      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        connectionFactory.setChannelsQos(Integer.parseInt(value));
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() -> connectionFactory.setChannelsQos(Integer.parseInt(value)));
       }
-    } ,
+    },
+    /**
+     * Maps to {@code RMQConnectionFactory.setDeclareReplyToDestination(boolean)}
+     * 
+     */
+    DeclareReplyToDestination {
+      @Override
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() ->connectionFactory.setDeclareReplyToDestination(BooleanUtils.toBoolean(value)));
+      }
+    },
     /**
      * Maps to {@code RMQConnectionFactory.setHost(String)}
      * 
      */
     Host {
       @Override
-      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        connectionFactory.setHost(value);
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() -> connectionFactory.setHost(value));
       }
     } ,
     /**
@@ -95,8 +96,8 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
      */
     OnMessageTimeoutMs {
       @Override
-      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        connectionFactory.setOnMessageTimeoutMs(Integer.parseInt(value));
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() -> connectionFactory.setOnMessageTimeoutMs(Integer.parseInt(value)));
       }
     } ,
     /**
@@ -105,12 +106,8 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
      */
     Password {
       @Override
-      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        try {
-          connectionFactory.setPassword(com.adaptris.security.password.Password.decode(value));
-        } catch (PasswordException e) {
-          throw ExceptionHelper.wrapCoreException(e);
-        }
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() -> connectionFactory.setPassword(com.adaptris.security.password.Password.decode(value)));
       }
     } ,
     /**
@@ -119,8 +116,8 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
      */
     Port {
       @Override
-      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        connectionFactory.setPort(Integer.parseInt(value));
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() -> connectionFactory.setPort(Integer.parseInt(value)));
       }
     } ,
     /**
@@ -129,24 +126,29 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
      */
     QueueBrowserReadMax {
       @Override
-      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        connectionFactory.setQueueBrowserReadMax(Integer.parseInt(value));
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() -> connectionFactory.setQueueBrowserReadMax(Integer.parseInt(value)));
       }
     } ,
     /**
      * Maps to {@code RMQConnectionFactory.useSslProtocol()}
      * 
+     * @deprecated since 3.9.1 use {@link #SSL} instead.
      */
+    @Deprecated
+    @Removal(version = "3.11.0", message = "use SSL instead")
     Ssl {
       @Override
-      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        SSL.apply(connectionFactory, value);
+
+      }
+    },
+    SSL {
+      @Override
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
         if (BooleanUtils.toBoolean(value)) {
-          try {
-            connectionFactory.useSslProtocol();
-          }
-          catch (NoSuchAlgorithmException e) {
-            throw ExceptionHelper.wrapCoreException(e);
-          }
+          applyConfiguration(() -> connectionFactory.useSslProtocol());
         }
       }
     } ,
@@ -156,8 +158,8 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
      */
     UseSslProtocol {
       @Override
-      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        connectionFactory.useSslProtocol(value);
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() -> connectionFactory.useSslProtocol(value));
       }
     } ,
     /**
@@ -166,8 +168,8 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
      */
     TerminationTimeout {
       @Override
-      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        connectionFactory.setTerminationTimeout(Long.parseLong(value));
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() -> connectionFactory.setTerminationTimeout(Long.parseLong(value)));
       }
     } ,
     
@@ -177,8 +179,8 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
      */
     TrustedPackages {
       @Override
-      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        connectionFactory.setTrustedPackages(Arrays.asList(value.split(",")));
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() -> connectionFactory.setTrustedPackages(Arrays.asList(value.split(","))));
       }
     } ,
     /**
@@ -187,12 +189,8 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
      */
     Uri {
       @Override
-      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        try {
-          connectionFactory.setUri(value);
-        } catch (JMSException e) {
-          throw new CoreException(e);
-        }
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() -> connectionFactory.setUri(value));
       }
     } ,
     /**
@@ -201,8 +199,8 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
      */
     UseDefaultSslContext {
       @Override
-      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        connectionFactory.setUseDefaultSslContext(BooleanUtils.toBoolean(value));
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() -> connectionFactory.setUseDefaultSslContext(BooleanUtils.toBoolean(value)));
       }
     } ,
     /**
@@ -211,8 +209,8 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
      */
     Username {
       @Override
-      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        connectionFactory.setUsername(value);
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() -> connectionFactory.setUsername(value));
       }
     } ,
     /**
@@ -221,15 +219,50 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
      */
     VirtualHost {
       @Override
-      public void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException {
-        connectionFactory.setVirtualHost(value);
+      public void apply(RMQConnectionFactory connectionFactory, String value) {
+        applyConfiguration(() -> connectionFactory.setVirtualHost(value));
       }
     } ;
     
-    public abstract void apply(RMQConnectionFactory connectionFactory, String value) throws CoreException;
+    public abstract void apply(RMQConnectionFactory connectionFactory, String value);
     
   }
   
+  /**
+   * Any additional properties that are required on the {@code RMQConnectionFactory}.
+   * 
+   * 
+   * @see ConnectionFactoryProperty
+   */
+  @NotNull
+  @AutoPopulated
+  @Getter
+  @Setter
+  @NonNull
+  private KeyValuePairSet connectionFactoryProperties;
+  /**
+   * If {@link #setAmqpMode(Boolean)} is set to true, then additionally set the exchange name as well when creating
+   * the {@code RMQDestination}.
+   * <p>
+   * Note that no validation is done on this value, and it is passed as-is into the constructor for RMQDestination.
+   * </p>
+   */
+  @Getter
+  @Setter
+  @AdvancedConfig
+  private String exchangeName;
+  /**
+   * If {@link #setAmqpMode(Boolean)} is set to true, then additionally set the exchange name as well when creating
+   * the {@code RMQDestination}.
+   * <p>
+   * Note that no validation is done on this value, and it is passed as-is into the constructor for RMQDestination.
+   * </p>
+   */
+  @Getter
+  @Setter
+  @AdvancedConfig
+  private String routingKey;
+
   public AdvancedRabbitMqJmsImplementation() {
     setConnectionFactoryProperties(new KeyValuePairSet());
   }
@@ -258,7 +291,7 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
         }
       }
     }
-    catch (CoreException e) {
+    catch (Exception e) {
       throw JmsUtils.wrapJMSException(e);
 
     }
@@ -266,23 +299,27 @@ public class AdvancedRabbitMqJmsImplementation extends BasicRabbitMqJmsImplement
   }
 
   @Override
-  public boolean connectionEquals(VendorImplementationBase vendorImp) {
-    return (vendorImp instanceof BasicRabbitMqJmsImplementation) && super.connectionEquals(vendorImp);
+  protected RMQDestinationBuilder builder() {
+    return (name) -> new RMQDestination(name, getExchangeName(), getRoutingKey(), name);
   }
 
-  public KeyValuePairSet getConnectionFactoryProperties() {
-    return connectionFactoryProperties;
+  private static RuntimeException asRuntimeException(Exception e) {
+    if (e instanceof RuntimeException) {
+      return (RuntimeException) e;
+    }
+    return new RuntimeException(e);
   }
 
-  /**
-   * Set any additional properties that are required on the {@code RMQConnectionFactory}.
-   * 
-   * 
-   * @param properties
-   * @see ConnectionFactoryProperty
-   */
-  public void setConnectionFactoryProperties(KeyValuePairSet properties) {
-    this.connectionFactoryProperties = Args.notNull(properties, "connectionFactoryProperties");
+  private static void applyConfiguration(Applicator a) {
+    try {
+      a.apply();
+    } catch (Exception e) {
+      throw asRuntimeException(e);
+    }
   }
 
+  @FunctionalInterface
+  protected interface Applicator {
+    void apply() throws Exception;
+  }
 }
