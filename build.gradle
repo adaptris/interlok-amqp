@@ -27,7 +27,7 @@ ext {
   slf4jVersion = '1.7.28'
   activeMqVersion= '5.15.10'
   log4j2Version = '2.12.1'
-  mockitoVersion = '3.1.0'  
+  mockitoVersion = '3.1.0'
 }
 
 ext.hasGraphViz = { ->
@@ -39,6 +39,26 @@ ext.hasGraphViz = { ->
     java.nio.file.Paths.get("${it}").resolve(app).toFile().exists()
   }
 }
+
+ext.gitBranchNameOrTimestamp = { branchName ->
+  if (branchName.equals("HEAD") || branchName.equals("develop") || branchName.startsWith("release")) {
+    return new Date().format('HH:mm:ss z');
+  }
+  return branchName;
+}
+
+ext.buildInfo = { ->
+   new ByteArrayOutputStream().withStream { os ->
+      exec {
+        executable = "git"
+        args = ["rev-parse", "--abbrev-ref", "HEAD"]
+        standardOutput = os
+      }
+      def branchName = os.toString().replaceAll("\r", "").replaceAll("\n", "").trim();
+      return gitBranchNameOrTimestamp(branchName);
+    }
+}
+
 
 if (JavaVersion.current().isJava8Compatible()) {
   allprojects {
@@ -100,7 +120,7 @@ dependencies {
   umlDoclet("nl.talsmasoftware:umldoclet:1.1.4")
 
   testCompile ('junit:junit:4.12')
-  
+
   testCompile ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
   testCompile ("org.apache.logging.log4j:log4j-core:$log4j2Version")
   testCompile ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
@@ -150,6 +170,7 @@ task generateVersion {
       entry(key: 'artifactId', value: project.name)
       entry(key: 'build.version', value: releaseVersion)
       entry(key: 'build.date', value: new Date().format('yyyy-MM-dd'))
+      entry(key: 'build.info', value: buildInfo())
     }
   }
 }
