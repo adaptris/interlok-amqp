@@ -4,8 +4,8 @@ plugins {
   id 'maven'
   id 'maven-publish'
   id  "jacoco"
-  id 'com.github.spotbugs' version '2.0.0'
-  id "io.freefair.lombok" version "4.1.2"
+  id 'com.github.spotbugs' version '3.0.0'
+  id "io.freefair.lombok" version "4.1.6"
 }
 
 ext {
@@ -18,16 +18,17 @@ ext {
   repoPassword = project.hasProperty('repoPassword') ? project.getProperty('repoPassword') : 'unknown'
   defaultNexusRepo = project.hasProperty('defaultNexusRepo') ? project.getProperty('defaultNexusRepo') : 'https://repo1.maven.org/maven2/'
   offlineJavadocPackageDir = new File(project.buildDir, "offline-javadoc-packages")
+  delombokTargetDir = new File("${project.projectDir}/src/main/generated")
 
   interlokJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-core/" + interlokCoreVersion
   interlokCommonJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-common/" + interlokCoreVersion
   componentName='Interlok/AMQP'
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '1.7.28'
-  activeMqVersion= '5.15.10'
+  slf4jVersion = '1.7.29'
+  activeMqVersion= '5.15.11'
   log4j2Version = '2.12.1'
-  mockitoVersion = '3.1.0'  
+  mockitoVersion = '3.2.0'
 }
 
 ext.hasGraphViz = { ->
@@ -39,6 +40,26 @@ ext.hasGraphViz = { ->
     java.nio.file.Paths.get("${it}").resolve(app).toFile().exists()
   }
 }
+
+ext.gitBranchNameOrTimestamp = { branchName ->
+  if (branchName.equals("HEAD") || branchName.equals("develop") || branchName.startsWith("release")) {
+    return new Date().format('HH:mm:ss z');
+  }
+  return branchName;
+}
+
+ext.buildInfo = { ->
+   new ByteArrayOutputStream().withStream { os ->
+      exec {
+        executable = "git"
+        args = ["rev-parse", "--abbrev-ref", "HEAD"]
+        standardOutput = os
+      }
+      def branchName = os.toString().replaceAll("\r", "").replaceAll("\n", "").trim();
+      return gitBranchNameOrTimestamp(branchName);
+    }
+}
+
 
 if (JavaVersion.current().isJava8Compatible()) {
   allprojects {
@@ -87,20 +108,20 @@ dependencies {
   compile ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
   compile ("org.slf4j:slf4j-api:$slf4jVersion")
 
-  compile ("org.apache.qpid:qpid-jms-client:0.46.0")
+  compile ("org.apache.qpid:qpid-jms-client:0.47.0")
   compile ("org.apache.qpid:qpid-amqp-1-0-client-jms:0.32")
   compile ("org.apache.qpid:qpid-client:6.3.4")
   compile ("org.apache.qpid:proton-jms:0.12.2")
-  compile ("org.apache.qpid:proton-j:0.33.2")
+  compile ("org.apache.qpid:proton-j:0.33.3")
 
-  compile ("com.rabbitmq.jms:rabbitmq-jms:1.13.0")
+  compile ("com.rabbitmq.jms:rabbitmq-jms:1.14.0")
   compile ("com.rabbitmq:amqp-client:5.7.3")
 
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
   umlDoclet("nl.talsmasoftware:umldoclet:1.1.4")
 
   testCompile ('junit:junit:4.12')
-  
+
   testCompile ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
   testCompile ("org.apache.logging.log4j:log4j-core:$log4j2Version")
   testCompile ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
@@ -150,6 +171,7 @@ task generateVersion {
       entry(key: 'artifactId', value: project.name)
       entry(key: 'build.version', value: releaseVersion)
       entry(key: 'build.date', value: new Date().format('yyyy-MM-dd'))
+      entry(key: 'build.info', value: buildInfo())
     }
   }
 }
@@ -181,10 +203,6 @@ javadoc {
   }
 }
 
-jacoco {
-  toolVersion="0.8.3"
-}
-
 jacocoTestReport {
     reports {
         xml.enabled true
@@ -205,7 +223,7 @@ task examplesJar(type: Jar, dependsOn: test) {
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
-    from sourceSets.main.allSource
+    from sourceSets.main.extensions.delombokTask
 }
 
 task umlJavadoc(type: Javadoc) {
@@ -215,7 +233,7 @@ task umlJavadoc(type: Javadoc) {
   onlyIf {
     hasGraphViz()
   }
-  source = sourceSets.main.allJava
+  source = sourceSets.main.extensions.delombokTask
   classpath = project.sourceSets.main.compileClasspath
   configure(options) {
     options.linksOffline(interlokJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-core-$interlokCoreVersion-javadoc.jar")
@@ -302,5 +320,23 @@ tasks.withType(com.github.spotbugs.SpotBugsTask) {
 }
 
 
+delombok {
+  target = delombokTargetDir
+}
+
+task lgtmCompile(type: JavaCompile, dependsOn: delombok) {
+  group 'Build'
+  description 'Compile for lgtm'
+
+  source = sourceSets.main.extensions.delombokTask
+  destinationDir = sourceSets.main.java.outputDir
+  classpath = project.sourceSets.main.compileClasspath
+}
+
+task deleteGeneratedFiles(type: Delete) {
+  delete delombokTargetDir
+}
+
 javadoc.dependsOn offlinePackageList,umlJavadoc
 check.dependsOn jacocoTestReport
+clean.dependsOn deleteGeneratedFiles
