@@ -8,11 +8,10 @@ import com.adaptris.core.jms.JmsConsumerCase;
 import com.adaptris.core.jms.PtpConsumer;
 
 public class BasicQpidConsumerTest extends JmsConsumerCase {
-
-  public BasicQpidConsumerTest(String name) {
-    super(name);
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
-
 
   @Override
   protected String createBaseFileName(Object object) {

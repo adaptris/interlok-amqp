@@ -2,7 +2,6 @@ package com.adaptris.core.amqp.qpid.amqp_0_10;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.adaptris.core.ConfiguredProduceDestination;
 import com.adaptris.core.StandaloneProducer;
 import com.adaptris.core.jms.JmsConnection;
@@ -13,9 +12,9 @@ import com.adaptris.core.jms.PtpProducer;
 public class StandardAmqpProducerTest extends JmsProducerExample {
 
   private static Logger log = LoggerFactory.getLogger(StandardAmqpProducerTest.class);
-
-  public StandardAmqpProducerTest(String name) {
-    super(name);
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
 
   @Override

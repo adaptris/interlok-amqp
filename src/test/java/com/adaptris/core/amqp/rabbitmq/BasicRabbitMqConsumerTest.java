@@ -9,10 +9,10 @@ import com.adaptris.core.jms.PtpConsumer;
 
 public class BasicRabbitMqConsumerTest extends JmsConsumerCase {
 
-  public BasicRabbitMqConsumerTest(String name) {
-    super(name);
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
-
 
   @Override
   protected String createBaseFileName(Object object) {
