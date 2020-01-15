@@ -4,7 +4,7 @@ import java.util.Arrays;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.validation.constraints.NotNull;
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.Removal;
