@@ -1,12 +1,14 @@
 package com.adaptris.core.amqp.qpid;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import java.util.concurrent.TimeUnit;
-
 import javax.jms.JMSException;
-
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.adaptris.core.BaseCase;
 import com.adaptris.core.jms.JmsConnection;
 import com.adaptris.core.jms.activemq.BasicActiveMqImplementation;
@@ -16,20 +18,12 @@ public class BasicQpidImplementationTest extends BaseCase {
 
   private static Logger log = LoggerFactory.getLogger(BasicQpidImplementationTest.class);
 
-  public BasicQpidImplementationTest(String name) {
-    super(name);
-  }
-
   @Override
-  public void setUp() throws Exception {
-    super.setUp();
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
-
-  @Override
-  public void tearDown() throws Exception {
-    super.tearDown();
-  }
-
+  
+  @Test
   public void testConnectionFactory() throws Exception {
     EmbeddedAMQP broker = new EmbeddedAMQP();
     broker.start();
@@ -39,25 +33,26 @@ public class BasicQpidImplementationTest extends BaseCase {
       assertNotNull(connection.currentConnection());
       assertTrue(connection.currentConnection() instanceof javax.jms.Connection);
       assertNotNull(connection.currentConnection().getMetaData());
-    }
-    finally {
+    } finally {
       stop(connection);
       broker.destroy();
     }
   }
 
+  @Test
   public void testConnectionFactory_withException() throws Exception {
     try {
       BasicQpidImplementation vendor = createVendorImpl("amqp://clientId/vhost?brokerlist='tcp://localhost:5672'");
       // SHould fail as brokerList: isn't a supported attribute.
       vendor.createConnectionFactory();
       fail();
-    }
-    catch (JMSException expected) {
+    } catch (JMSException expected) {
 
     }
 
   }
+
+  @Test
   public void testConnectionEquals() throws Exception {
     BasicQpidImplementation vendor = createVendorImpl("amqp://localhost:5672");
     BasicQpidImplementation vendor2 = createVendorImpl("amqp://localhost:5672");

@@ -8,10 +8,6 @@ import com.adaptris.util.KeyValuePair;
 
 public class AdvancedRabbitMqConsumerTest extends BasicRabbitMqConsumerTest {
 
-  public AdvancedRabbitMqConsumerTest(String name) {
-    super(name);
-  }
-
 
   @Override
   protected String createBaseFileName(Object object) {
@@ -25,6 +21,7 @@ public class AdvancedRabbitMqConsumerTest extends BasicRabbitMqConsumerTest {
     return result;
   }
 
+  @Override
   protected AdvancedRabbitMqJmsImplementation createVendorImpl() {
     AdvancedRabbitMqJmsImplementation mq = new AdvancedRabbitMqJmsImplementation();
     mq.setBrokerUrl("amqp://localhost:5672/vhost");

@@ -1,10 +1,13 @@
 package com.adaptris.core.amqp.qpid.amqp_0_10;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import javax.jms.JMSException;
-
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.adaptris.core.BaseCase;
 import com.adaptris.core.amqp.qpid.BasicQpidImplementationTest;
 import com.adaptris.core.jms.activemq.BasicActiveMqImplementation;
@@ -12,11 +15,12 @@ import com.adaptris.core.jms.activemq.BasicActiveMqImplementation;
 public class StandardQpidImplementationTest extends BaseCase {
 
   private static Logger log = LoggerFactory.getLogger(BasicQpidImplementationTest.class);
-
-  public StandardQpidImplementationTest(String name) {
-    super(name);
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
 
+  @Test
   public void testConnectionFactory() throws Exception {
     try {
       StandardQpidImplementation vendor = createVendorImpl();
@@ -26,6 +30,7 @@ public class StandardQpidImplementationTest extends BaseCase {
     }
   }
 
+  @Test
   public void testConnectionFactory_WithException() throws Exception {
     try {
       StandardQpidImplementation vendor = new StandardQpidImplementation();
@@ -39,6 +44,7 @@ public class StandardQpidImplementationTest extends BaseCase {
     }
   }
 
+  @Test
   public void testConnectionEquals() throws Exception {
     StandardQpidImplementation vendor = createVendorImpl();
     StandardQpidImplementation vendor2 = createVendorImpl();

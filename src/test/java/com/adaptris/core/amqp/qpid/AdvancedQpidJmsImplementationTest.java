@@ -1,11 +1,11 @@
 package com.adaptris.core.amqp.qpid;
 
-import javax.jms.JMSException;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.apache.qpid.jms.JmsConnectionFactory;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.adaptris.util.KeyValuePair;
 import com.adaptris.util.KeyValuePairSet;
 
@@ -13,10 +13,7 @@ public class AdvancedQpidJmsImplementationTest extends BasicQpidJmsImplementatio
 
   private static Logger log = LoggerFactory.getLogger(AdvancedQpidJmsImplementationTest.class);
 
-  public AdvancedQpidJmsImplementationTest(String name) {
-    super(name);
-  }
-
+  @Test
   public void testConnectionProperties() throws Exception {
     AdvancedQpidJmsImplementation vendor = createVendorImpl("amqp://localhost:5672");
     KeyValuePairSet props = new KeyValuePairSet();

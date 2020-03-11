@@ -8,11 +8,6 @@ import com.adaptris.util.KeyValuePair;
 
 public class AdvancedQpidConsumerTest extends BasicQpidConsumerTest {
 
-  public AdvancedQpidConsumerTest(String name) {
-    super(name);
-  }
-
-
   @Override
   protected String createBaseFileName(Object object) {
     return ((StandaloneConsumer) object).getConsumer().getClass().getName() + "-QPID-ADVANCED-AMQP-1.0";
@@ -25,6 +20,7 @@ public class AdvancedQpidConsumerTest extends BasicQpidConsumerTest {
     return result;
   }
 
+  @Override
   protected AdvancedQpidJmsImplementation createVendorImpl() {
     AdvancedQpidJmsImplementation mq = new AdvancedQpidJmsImplementation();
     mq.setBrokerUrl("amqp://localhost:5672?clientid=test-client&remote-host=default");

@@ -1,12 +1,14 @@
 package com.adaptris.core.amqp.qpid;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import java.util.concurrent.TimeUnit;
-
 import javax.jms.JMSException;
-
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.adaptris.core.BaseCase;
 import com.adaptris.core.jms.JmsConnection;
 import com.adaptris.core.jms.activemq.BasicActiveMqImplementation;
@@ -15,23 +17,15 @@ import com.adaptris.util.TimeInterval;
 public class BasicQpidJmsImplementationTest extends BaseCase {
 
   private static Logger log = LoggerFactory.getLogger(BasicQpidJmsImplementationTest.class);
-
-  public BasicQpidJmsImplementationTest(String name) {
-    super(name);
-  }
-
   @Override
-  public void setUp() throws Exception {
-    super.setUp();
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
 
-  @Override
-  public void tearDown() throws Exception {
-    super.tearDown();
-  }
 
   // Can't actually test against a real ActiveMQ broker,
   // 5.9.0 "hangs"; 5.11.1 fails with a stupid NoMethodError
+  // @Test
   // public void testConnectionFactory() throws Exception {
   // EmbeddedAMQP broker = new EmbeddedAMQP();
   // broker.start();
@@ -48,11 +42,13 @@ public class BasicQpidJmsImplementationTest extends BaseCase {
   // }
   // }
 
+  @Test
   public void testConnectionFactory() throws Exception {
     BasicQpidJmsImplementation vendor = createVendorImpl("amqp://localhost:5672");
     assertNotNull(vendor.createConnectionFactory());
   }
 
+  @Test
   public void testConnectionFactory_withException() throws Exception {
     try {
       BasicQpidJmsImplementation vendor = createVendorImpl("isn't a URL");
@@ -64,6 +60,7 @@ public class BasicQpidJmsImplementationTest extends BaseCase {
 
   }
 
+  @Test
   public void testConnectionEquals() throws Exception {
     BasicQpidJmsImplementation vendor = createVendorImpl("amqp://localhost:5672");
     BasicQpidJmsImplementation vendor2 = createVendorImpl("amqp://localhost:5672");
