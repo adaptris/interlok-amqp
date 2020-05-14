@@ -28,7 +28,7 @@ ext {
   slf4jVersion = '1.7.30'
   activeMqVersion= '5.15.12'
   mockitoVersion = '3.3.3'
-  nettyVersion="4.1.49.Final"
+  nettyVersion="4.1.50.Final"
 }
 
 ext.hasGraphViz = { ->
