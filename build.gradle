@@ -115,7 +115,7 @@ dependencies {
   compile ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
   compile ("org.slf4j:slf4j-api:$slf4jVersion")
 
-  compile ("org.apache.qpid:qpid-jms-client:0.51.0"){
+  compile ("org.apache.qpid:qpid-jms-client:0.52.0"){
     // 4.1.43.Final has a HTTP request smuggler vuln, so
     // we exclude netty, and force the fixed version
     // dependabot will sort us out...
