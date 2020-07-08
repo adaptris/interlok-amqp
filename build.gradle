@@ -4,8 +4,9 @@ plugins {
   id 'maven'
   id 'maven-publish'
   id  "jacoco"
-  id 'com.github.spotbugs' version '4.0.5'
-  id "io.freefair.lombok" version "5.0.0"
+  id 'com.github.spotbugs' version '4.2.3'
+  id "io.freefair.lombok" version "5.1.0"
+  id 'org.owasp.dependencycheck' version '5.3.2.1'
 }
 
 ext {
@@ -27,9 +28,9 @@ ext {
   organizationUrl = "http://interlok.adaptris.net"
   slf4jVersion = '1.7.30'
   activeMqVersion= '5.15.12'
-  log4j2Version = '2.13.2'
   mockitoVersion = '3.3.3'
-  nettyVersion="4.1.49.Final"
+  nettyVersion="4.1.50.Final"
+  log4j2Version = '2.13.3'
 }
 
 ext.hasGraphViz = { ->
@@ -114,17 +115,17 @@ dependencies {
   compile ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
   compile ("org.slf4j:slf4j-api:$slf4jVersion")
 
-  compile ("org.apache.qpid:qpid-jms-client:0.51.0"){
+  compile ("org.apache.qpid:qpid-jms-client:0.52.0"){
     // 4.1.43.Final has a HTTP request smuggler vuln, so
     // we exclude netty, and force the fixed version
     // dependabot will sort us out...
     exclude group: "io.netty"
   }
   compile ("org.apache.qpid:qpid-amqp-1-0-client-jms:0.32")
-  compile ("org.apache.qpid:qpid-client:6.3.4")
+  compile ("org.apache.qpid:qpid-client:6.4.0")
   compile ("org.apache.qpid:proton-jms:0.12.2")
-  compile ("org.apache.qpid:proton-j:0.33.4")
-  compile ("com.rabbitmq.jms:rabbitmq-jms:2.0.0")
+  compile ("org.apache.qpid:proton-j:0.33.5")
+  compile ("com.rabbitmq.jms:rabbitmq-jms:2.1.1")
   compile ("com.rabbitmq:amqp-client:5.9.0")
 
   implementation ("io.netty:netty-buffer:$nettyVersion")
@@ -144,9 +145,6 @@ dependencies {
   testCompile ('junit:junit:4.13')
 
   testCompile ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
-  testCompile ("org.apache.logging.log4j:log4j-core:$log4j2Version")
-  testCompile ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
-  testCompile ("org.apache.logging.log4j:log4j-api:$log4j2Version")
   testCompile ("org.mockito:mockito-core:$mockitoVersion")
   testCompile ("org.mockito:mockito-inline:$mockitoVersion")
   testCompile("org.apache.activemq:activemq-client:$activeMqVersion")
@@ -155,6 +153,10 @@ dependencies {
   testCompile("org.apache.activemq:activemq-amqp:$activeMqVersion")
   testCompile("org.apache.activemq.protobuf:activemq-protobuf:1.1")
   testCompile("org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1")
+  // INTERLOK-3233 reveals that we have a duff test class!
+  testCompile ("org.apache.logging.log4j:log4j-core:$log4j2Version")
+  testCompile ("org.apache.logging.log4j:log4j-api:$log4j2Version")
+  testCompile ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
 
   javadoc("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
 
@@ -337,6 +339,16 @@ spotbugsMain {
 spotbugsTest.enabled = false
 
 
+dependencyCheck  {
+  suppressionFiles= [ "https://raw.githubusercontent.com/adaptris/interlok/develop/gradle/owasp-exclude.xml" , "$rootDir/gradle/owasp-exclude.xml" ]
+  skipConfigurations = [ "antSql", "spotbugs", "umlDoclet", "offlineJavadocPackages", "javadoc", "jacocoAnt", "jacocoAgent", "spotbugsPlugins", "spotbugsSlf4j" ]
+  formats = [ "HTML", "JUNIT" ]
+  junitFailOnCVSS = 7.0
+  failBuildOnCVSS = 7.0
+  analyzers {
+    assemblyEnabled=false
+  }
+}
 
 delombok {
   target = delombokTargetDir
