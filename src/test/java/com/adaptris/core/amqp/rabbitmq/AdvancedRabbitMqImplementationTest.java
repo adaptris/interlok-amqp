@@ -29,7 +29,8 @@ public class AdvancedRabbitMqImplementationTest extends BasicRabbitMqImplementat
     mq.getConnectionFactoryProperties().add(new KeyValuePair(ConnectionFactoryProperty.Password.name(), "password"));
     mq.getConnectionFactoryProperties().add(new KeyValuePair(ConnectionFactoryProperty.Port.name(), "5672"));
     mq.getConnectionFactoryProperties().add(new KeyValuePair(ConnectionFactoryProperty.QueueBrowserReadMax.name(), "5672"));
-    mq.getConnectionFactoryProperties().add(new KeyValuePair(ConnectionFactoryProperty.Ssl.name(), "false"));
+    mq.getConnectionFactoryProperties()
+        .add(new KeyValuePair(ConnectionFactoryProperty.SSL.name(), "false"));
     mq.getConnectionFactoryProperties().add(new KeyValuePair(ConnectionFactoryProperty.UseSslProtocol.name(), "TLS1.0"));
     mq.getConnectionFactoryProperties().add(new KeyValuePair(ConnectionFactoryProperty.TerminationTimeout.name(), "10000"));
     mq.getConnectionFactoryProperties().add(new KeyValuePair(ConnectionFactoryProperty.TrustedPackages.name(), "com.adaptris"));
@@ -58,7 +59,8 @@ public class AdvancedRabbitMqImplementationTest extends BasicRabbitMqImplementat
   public void testApplyConnectionFactoryProperties_UseSsl() throws Exception {
     AdvancedRabbitMqJmsImplementation mq = new AdvancedRabbitMqJmsImplementation();
     mq.setBrokerUrl("amqp://localhost:5672");
-    mq.getConnectionFactoryProperties().add(new KeyValuePair(ConnectionFactoryProperty.Ssl.name(), "true"));
+    mq.getConnectionFactoryProperties()
+        .add(new KeyValuePair(ConnectionFactoryProperty.SSL.name(), "true"));
     mq.createConnectionFactory();
   }
 
