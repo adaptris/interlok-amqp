@@ -1,6 +1,5 @@
 package com.adaptris.core.amqp.qpid;
 
-import com.adaptris.core.ConfiguredConsumeDestination;
 import com.adaptris.core.StandaloneConsumer;
 import com.adaptris.core.jms.JmsConnection;
 import com.adaptris.core.jms.JmsConnectionErrorHandler;
@@ -20,7 +19,7 @@ public class BasicQpidConsumerTest extends JmsConsumerCase {
 
   @Override
   protected Object retrieveObjectForSampleConfig() {
-    PtpConsumer consumer = new PtpConsumer(new ConfiguredConsumeDestination("SOME_MQ_QUEUE"));
+    PtpConsumer consumer = new PtpConsumer().withQueue("SOME_MQ_QUEUE");
     StandaloneConsumer result = new StandaloneConsumer(configure(new JmsConnection()), consumer);
     return result;
   }
