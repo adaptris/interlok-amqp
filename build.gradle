@@ -4,9 +4,9 @@ plugins {
   id 'maven'
   id 'maven-publish'
   id  "jacoco"
-  id 'com.github.spotbugs' version '4.5.0'
-  id "io.freefair.lombok" version "5.1.1"
-  id 'org.owasp.dependencycheck' version '5.3.2.1'
+  id 'com.github.spotbugs' version '4.5.1'
+  id "io.freefair.lombok" version "5.3.0"
+  id 'org.owasp.dependencycheck' version '6.0.3'
 }
 
 ext {
@@ -28,8 +28,8 @@ ext {
   organizationUrl = "http://interlok.adaptris.net"
   slf4jVersion = '1.7.30'
   activeMqVersion= '5.16.0'
-  mockitoVersion = '3.5.9'
-  nettyVersion="4.1.51.Final"
+  mockitoVersion = '3.6.0'
+  nettyVersion="4.1.53.Final"
   log4j2Version = '2.13.3'
 }
 
@@ -124,9 +124,9 @@ dependencies {
   compile ("org.apache.qpid:qpid-amqp-1-0-client-jms:0.32")
   compile ("org.apache.qpid:qpid-client:6.4.0")
   compile ("org.apache.qpid:proton-jms:0.12.2")
-  compile ("org.apache.qpid:proton-j:0.33.6")
+  compile ("org.apache.qpid:proton-j:0.33.7")
   compile ("com.rabbitmq.jms:rabbitmq-jms:2.1.1")
-  compile ("com.rabbitmq:amqp-client:5.9.0")
+  compile ("com.rabbitmq:amqp-client:5.10.0")
 
   implementation ("io.netty:netty-buffer:$nettyVersion")
   implementation ("io.netty:netty-common:$nettyVersion")
@@ -142,7 +142,7 @@ dependencies {
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
   umlDoclet("nl.talsmasoftware:umldoclet:1.1.4")
 
-  testCompile ('junit:junit:4.13')
+  testCompile ('junit:junit:4.13.1')
 
   testCompile ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
   testCompile ("org.mockito:mockito-core:$mockitoVersion")
