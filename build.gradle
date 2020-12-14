@@ -309,6 +309,7 @@ publishing {
         properties.appendNode("tags", "amqp,jms")
         properties.appendNode("license", "false")
         properties.appendNode("externalUrl", "https://www.amqp.org/")
+        properties.appendNode("repository", "https://github.com/adaptris/interlok-amqp")
       }
     }
   }
