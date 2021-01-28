@@ -27,14 +27,12 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * underlying Qpid ConnectionFactory property.
  * 
  * <pre>
- * {@code 
- *   <connection-factory-properties>
- *     <key-value-pair>
- *        <key>QueuePrefix&lt;/key>
- *        <value>abc&lt;/value>
- *     </key-value-pair>
- *   </connection-factory-properties>
- * }
+ *   &lt;connection-factory-properties&gt;
+ *     &lt;key-value-pair&gt;
+ *        &lt;key&gt;QueuePrefix&lt;/key&gt;
+ *        &lt;value&gt;abc&lt;/value&gt;
+ *     &lt;/key-value-pair&gt;
+ *   &lt;/connection-factory-properties&gt;
  * </pre>
  * 
  * will invoke {@link ConnectionFactoryImpl#setQueuePrefix(String)}, setting the QueuePrefix
@@ -185,12 +183,12 @@ public class AdvancedQpidImplementation extends BasicQpidImplementation {
    * The key from the <code>connection-factory-properties</code> element should match the name of the underlying Qpid
    * ConnectionFactory property. <code>
    * <pre>
-   *   &lt;connection-factory-properties>
-   *     &lt;key-value-pair>
-   *        &lt;key>QueuePrefix&lt;/key>
-   *        &lt;value>abc&lt;/value>
-   *     &lt;/key-value-pair>
-   *   &lt;/connection-factory-properties>
+   *   &lt;connection-factory-properties&gt;
+   *     &lt;key-value-pair&gt;
+   *        &lt;key&gt;QueuePrefix&lt;/key&gt;
+   *        &lt;value&gt;abc&lt;/value&gt;
+   *     &lt;/key-value-pair&gt;
+   *   &lt;/connection-factory-properties&gt;
    * </pre>
    * </code> will invoke {@link ConnectionFactoryImpl#setQueuePrefix(String)}, setting the QueuePrefix property to "abc". Only
    * explicitly configured properties will invoke the associated setter method.
