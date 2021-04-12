@@ -3,14 +3,10 @@ package com.adaptris.core.amqp.qpid.amqp_0_10;
 import com.adaptris.core.StandaloneConsumer;
 import com.adaptris.core.jms.JmsConnection;
 import com.adaptris.core.jms.JmsConnectionErrorHandler;
-import com.adaptris.core.jms.JmsConsumerCase;
+import com.adaptris.interlok.junit.scaffolding.jms.JmsConsumerCase;
 import com.adaptris.core.jms.PtpConsumer;
 
 public class StandardQpidConsumerTest extends JmsConsumerCase {
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
 
   @Override
   protected String createBaseFileName(Object object) {

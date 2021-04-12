@@ -1,14 +1,9 @@
 package com.adaptris.core.amqp.rabbitmq;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.adaptris.core.StandaloneProducer;
 import com.adaptris.util.KeyValuePair;
 
 public class AdvancedRabbitMqProducerTest extends BasicRabbitMqProducerTest {
-
-  private static Logger log = LoggerFactory.getLogger(AdvancedRabbitMqProducerTest.class);
-
 
   @Override
   protected String createBaseFileName(Object object) {

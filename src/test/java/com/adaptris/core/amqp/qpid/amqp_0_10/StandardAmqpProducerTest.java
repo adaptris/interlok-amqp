@@ -1,20 +1,12 @@
 package com.adaptris.core.amqp.qpid.amqp_0_10;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.adaptris.core.StandaloneProducer;
 import com.adaptris.core.jms.JmsConnection;
 import com.adaptris.core.jms.JmsConnectionErrorHandler;
-import com.adaptris.core.jms.JmsProducerExample;
 import com.adaptris.core.jms.PtpProducer;
+import com.adaptris.interlok.junit.scaffolding.jms.JmsProducerExample;
 
 public class StandardAmqpProducerTest extends JmsProducerExample {
-
-  private static Logger log = LoggerFactory.getLogger(StandardAmqpProducerTest.class);
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
 
   @Override
   protected String createBaseFileName(Object object) {
