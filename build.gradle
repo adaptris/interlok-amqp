@@ -146,7 +146,7 @@ dependencies {
 
 
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
-  umlDoclet("nl.talsmasoftware:umldoclet:1.1.4")
+  umlDoclet("nl.talsmasoftware:umldoclet:2.0.12")
 
   testCompile ('junit:junit:4.13.2')
 
