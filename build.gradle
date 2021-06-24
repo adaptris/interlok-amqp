@@ -1,28 +1,28 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 plugins {
-  id 'java'
-  id 'maven'
+  id 'java-library'
   id 'maven-publish'
-  id  "jacoco"
+  id 'jacoco'
   id 'com.github.spotbugs' version '4.7.1'
   id "io.freefair.lombok" version "5.3.3.3"
   id 'org.owasp.dependencycheck' version '6.2.2'
 }
 
 ext {
-  interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '4.2-SNAPSHOT'
-  releaseVersion = project.hasProperty('releaseVersion') ? project.getProperty('releaseVersion') : '4.2-SNAPSHOT'
-  nexusBaseUrl = project.hasProperty('nexusBaseUrl') ? project.getProperty('nexusBaseUrl') : 'https://nexus.adaptris.net/nexus'
-  mavenPublishUrl = project.hasProperty('mavenPublishUrl') ? project.getProperty('mavenPublishUrl') : nexusBaseUrl + '/content/repositories/snapshots'
+  interlokCoreVersion = project.findProperty('interlokCoreVersion') ?: '4.2-SNAPSHOT'
+  releaseVersion = project.findProperty('releaseVersion') ?: '4.2-SNAPSHOT'
+  nexusBaseUrl = project.findProperty('nexusBaseUrl') ?: 'https://nexus.adaptris.net/nexus'
+  mavenPublishUrl = project.findProperty('mavenPublishUrl') ?: nexusBaseUrl + '/content/repositories/snapshots'
   javadocsBaseUrl = nexusBaseUrl + "/content/sites/javadocs/com/adaptris"
-  repoUsername = project.hasProperty('repoUsername') ? project.getProperty('repoUsername') : 'unknown'
-  repoPassword = project.hasProperty('repoPassword') ? project.getProperty('repoPassword') : 'unknown'
-  defaultNexusRepo = project.hasProperty('defaultNexusRepo') ? project.getProperty('defaultNexusRepo') : 'https://repo1.maven.org/maven2/'
+  repoUsername = project.findProperty('repoUsername') ?: 'unknown'
+  repoPassword = project.findProperty('repoPassword') ?: 'unknown'
+  defaultNexusRepo = project.findProperty('defaultNexusRepo') ?: 'unknown'
+  interlokJavadocs= project.findProperty('interlokJavadocs') ?: javadocsBaseUrl + "/interlok-core/" + interlokCoreVersion
+  interlokCommonJavadocs= project.findProperty('interlokCommonJavadocs') ?: javadocsBaseUrl + "/interlok-common/" + interlokCoreVersion
   offlineJavadocPackageDir = new File(project.buildDir, "offline-javadoc-packages")
+
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
 
-  interlokJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-core/" + interlokCoreVersion
-  interlokCommonJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-common/" + interlokCoreVersion
   componentName='Interlok Messaging/AMQP'
   componentDesc='Treating a AMQP 0.9.0/1.0 Provider as a JMS via Apache QPID'
   organizationName = "Adaptris Ltd"
@@ -65,12 +65,10 @@ ext.buildInfo = { ->
 }
 
 
-if (JavaVersion.current().isJava8Compatible()) {
-  allprojects {
-    tasks.withType(Javadoc) {
-      options.addStringOption('Xdoclint:none', '-quiet')
-    }
-  }
+// Disable gradle module generation since we probably don't want
+// xxx.module files in your repository.
+tasks.withType(GenerateModuleMetadata) {
+  enabled = false
 }
 
 
@@ -83,7 +81,12 @@ generateLombokConfig.enabled = false
 
 repositories {
   mavenCentral()
-  maven { url "$defaultNexusRepo" }
+  if (defaultNexusRepo != "unknown") {
+    maven {
+      url "$defaultNexusRepo"
+      allowInsecureProtocol true
+    }
+  }
   maven { url "$nexusBaseUrl/content/groups/public" }
   maven { url "$nexusBaseUrl/content/groups/interlok" }
 }
@@ -117,22 +120,21 @@ configurations.all {
 }
 
 dependencies {
-  compile ("com.adaptris:interlok-core:$interlokCoreVersion") { changing= true}
-  compile ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
-  compile ("org.slf4j:slf4j-api:$slf4jVersion")
+  api ("com.adaptris:interlok-core:$interlokCoreVersion") { changing= true}
+  api ("com.adaptris:interlok-common:$interlokCoreVersion") { changing= true}
 
-  compile ("org.apache.qpid:qpid-jms-client:1.0.0"){
+  api ("org.apache.qpid:qpid-jms-client:1.0.0"){
     // 4.1.43.Final has a HTTP request smuggler vuln, so
     // we exclude netty, and force the fixed version
     // dependabot will sort us out...
     exclude group: "io.netty"
   }
-  compile ("org.apache.qpid:qpid-amqp-1-0-client-jms:0.32")
-  compile ("org.apache.qpid:qpid-client:6.4.0")
-  compile ("org.apache.qpid:proton-jms:0.12.2")
-  compile ("org.apache.qpid:proton-j:0.33.8")
-  compile ("com.rabbitmq.jms:rabbitmq-jms:2.3.0")
-  compile ("com.rabbitmq:amqp-client:5.12.0")
+  api ("org.apache.qpid:qpid-amqp-1-0-client-jms:0.32")
+  api ("org.apache.qpid:qpid-client:6.4.0")
+  api ("org.apache.qpid:proton-jms:0.12.2")
+  api ("org.apache.qpid:proton-j:0.33.8")
+  api ("com.rabbitmq.jms:rabbitmq-jms:2.3.0")
+  api ("com.rabbitmq:amqp-client:5.12.0")
 
   implementation ("io.netty:netty-buffer:$nettyVersion")
   implementation ("io.netty:netty-common:$nettyVersion")
@@ -143,26 +145,27 @@ dependencies {
   implementation ("io.netty:netty-transport-native-kqueue:$nettyVersion")
   implementation ("io.netty:netty-codec:$nettyVersion")
   implementation ("io.netty:netty-codec-http:$nettyVersion")
+  implementation ("org.slf4j:slf4j-api:$slf4jVersion")
 
 
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
   umlDoclet("nl.talsmasoftware:umldoclet:1.1.4")
 
-  testCompile ('junit:junit:4.13.2')
+  testImplementation ('junit:junit:4.13.2')
 
-  testCompile ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true}
-  testCompile ("org.mockito:mockito-core:$mockitoVersion")
-  testCompile ("org.mockito:mockito-inline:$mockitoVersion")
-  testCompile("org.apache.activemq:activemq-client:$activeMqVersion")
-  testCompile("org.apache.activemq:activemq-jaas:$activeMqVersion")
-  testCompile("org.apache.activemq:activemq-kahadb-store:$activeMqVersion")
-  testCompile("org.apache.activemq:activemq-amqp:$activeMqVersion")
-  testCompile("org.apache.activemq.protobuf:activemq-protobuf:1.1")
-  testCompile("org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1")
+  testImplementation ("com.adaptris:interlok-stubs:$interlokCoreVersion") { changing= true }
+  testImplementation ("org.mockito:mockito-core:$mockitoVersion")
+  testImplementation ("org.mockito:mockito-inline:$mockitoVersion")
+  testImplementation("org.apache.activemq:activemq-client:$activeMqVersion")
+  testImplementation("org.apache.activemq:activemq-jaas:$activeMqVersion")
+  testImplementation("org.apache.activemq:activemq-kahadb-store:$activeMqVersion")
+  testImplementation("org.apache.activemq:activemq-amqp:$activeMqVersion")
+  testImplementation("org.apache.activemq.protobuf:activemq-protobuf:1.1")
+  testImplementation("org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1")
   // INTERLOK-3233 reveals that we have a duff test class!
-  testCompile ("org.apache.logging.log4j:log4j-core:$log4j2Version")
-  testCompile ("org.apache.logging.log4j:log4j-api:$log4j2Version")
-  testCompile ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
+  testImplementation ("org.apache.logging.log4j:log4j-core:$log4j2Version")
+  testImplementation ("org.apache.logging.log4j:log4j-api:$log4j2Version")
+  testImplementation ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
 
   javadoc("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
 
@@ -231,6 +234,7 @@ javadoc {
     taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
     options.addStringOption "tagletpath", configurations.javadoc.asPath
     options.addBooleanOption "-no-module-directories", true
+    options.addStringOption('Xdoclint:none', '-quiet')
     title= componentName
   }
 }
@@ -272,6 +276,7 @@ task umlJavadoc(type: Javadoc) {
     options.linksOffline(interlokCommonJavadocs, offlineJavadocPackageDir.getCanonicalPath() + "/interlok-common-$interlokCoreVersion-javadoc.jar")
     taglets = ["com.adaptris.taglet.ConfigTaglet", "com.adaptris.taglet.LicenseTaglet"]
     options.addStringOption "tagletpath", configurations.javadoc.asPath
+    options.addStringOption('Xdoclint:none', '-quiet')
     options.addBooleanOption "-no-module-directories", true
     options.docletpath = configurations.umlDoclet.files.asType(List)
     options.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
@@ -352,7 +357,7 @@ spotbugsTest.enabled = false
 
 dependencyCheck  {
   suppressionFiles= [ "https://raw.githubusercontent.com/adaptris/interlok/develop/gradle/owasp-exclude.xml" , "$rootDir/gradle/owasp-exclude.xml" ]
-  skipConfigurations = [ "antSql", "spotbugs", "umlDoclet", "offlineJavadocPackages", "javadoc", "jacocoAnt", "jacocoAgent", "spotbugsPlugins", "spotbugsSlf4j" ]
+  scanConfigurations = [ "api", "compileClasspath", "runtimeClasspath" ]
   formats = [ "HTML", "JUNIT" ]
   junitFailOnCVSS = 7.0
   failBuildOnCVSS = 7.0
