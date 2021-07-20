@@ -27,7 +27,7 @@ ext {
   componentDesc='Treating a AMQP 0.9.0/1.0 Provider as a JMS via Apache QPID'
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '1.7.31'
+  slf4jVersion = '1.7.32'
   activeMqVersion= '5.16.2'
   mockitoVersion = '3.11.2'
   nettyVersion="4.1.66.Final"
