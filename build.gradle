@@ -30,7 +30,7 @@ ext {
   slf4jVersion = '1.7.32'
   activeMqVersion= '5.16.3'
   mockitoVersion = '3.12.4'
-  nettyVersion="4.1.67.Final"
+  nettyVersion="4.1.68.Final"
   log4j2Version = '2.14.1'
 }
 
