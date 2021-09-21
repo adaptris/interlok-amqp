@@ -17,7 +17,6 @@ public class AdvancedRabbitMqImplementationTest extends BasicRabbitMqImplementat
   }
 
   @Test
-  @SuppressWarnings("deprecation")
   public void testApplyConnectionFactoryProperties() throws Exception {
     AdvancedRabbitMqJmsImplementation mq = new AdvancedRabbitMqJmsImplementation();
     mq.setBrokerUrl("amqp://localhost:5672");
@@ -55,7 +54,6 @@ public class AdvancedRabbitMqImplementationTest extends BasicRabbitMqImplementat
   }
 
   @Test
-  @SuppressWarnings("deprecation")
   public void testApplyConnectionFactoryProperties_UseSsl() throws Exception {
     AdvancedRabbitMqJmsImplementation mq = new AdvancedRabbitMqJmsImplementation();
     mq.setBrokerUrl("amqp://localhost:5672");

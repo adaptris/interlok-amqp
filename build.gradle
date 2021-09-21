@@ -173,9 +173,9 @@ dependencies {
   testImplementation("org.apache.activemq.protobuf:activemq-protobuf:1.1")
   testImplementation("org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1.1")
   // INTERLOK-3233 reveals that we have a duff test class!
-  testImplementation ("org.apache.logging.log4j:log4j-core:$log4j2Version")
-  testImplementation ("org.apache.logging.log4j:log4j-api:$log4j2Version")
-  testImplementation ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
+  // testImplementation ("org.apache.logging.log4j:log4j-core:$log4j2Version")
+  // testImplementation ("org.apache.logging.log4j:log4j-api:$log4j2Version")
+  // testImplementation ("org.apache.logging.log4j:log4j-1.2-api:$log4j2Version")
 
   javadoc("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
 

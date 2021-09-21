@@ -1,24 +1,22 @@
 package com.adaptris.core.amqp.qpid;
 
-import static com.adaptris.core.PortManager.release;
-
+import static com.adaptris.interlok.junit.scaffolding.util.PortManager.release;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
-
-import com.adaptris.core.PortManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.adaptris.interlok.junit.scaffolding.util.PortManager;
 import com.adaptris.util.SafeGuidGenerator;
 
 public class EmbeddedAMQP {
 
   private static final String AMQP_URL_PREFIX = "amqp://0.0.0.0:";
   private static final String OPENWIRE_URL_PREFIX = "tcp://localhost:";
-  private static Logger log = Logger.getLogger(EmbeddedAMQP.class);
+  private static Logger log = LoggerFactory.getLogger(EmbeddedAMQP.class);
   private BrokerService broker = null;
   private String brokerName;
   private File brokerDataDir;
