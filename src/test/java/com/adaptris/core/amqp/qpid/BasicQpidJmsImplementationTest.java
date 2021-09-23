@@ -9,44 +9,38 @@ import javax.jms.JMSException;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.adaptris.core.BaseCase;
 import com.adaptris.core.jms.JmsConnection;
 import com.adaptris.core.jms.activemq.BasicActiveMqImplementation;
+import com.adaptris.interlok.junit.scaffolding.BaseCase;
 import com.adaptris.util.TimeInterval;
 
 public class BasicQpidJmsImplementationTest extends BaseCase {
 
   private static Logger log = LoggerFactory.getLogger(BasicQpidJmsImplementationTest.class);
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
-
 
   // Can't actually test against a real ActiveMQ broker,
   // 5.9.0 "hangs"; 5.11.1 fails with a stupid NoMethodError
-  // @Test
-  // public void testConnectionFactory() throws Exception {
-  // EmbeddedAMQP broker = new EmbeddedAMQP();
-  // broker.start();
-  // JmsConnection connection = configureForTests(new JmsConnection(), broker);
-  // try {
-  // start(connection);
-  // assertNotNull(connection.currentConnection());
-  // assertTrue(connection.currentConnection() instanceof javax.jms.Connection);
-  // assertNotNull(connection.currentConnection().getMetaData());
-  // }
-  // finally {
-  // stop(connection);
-  // broker.destroy();
-  // }
-  // }
-
   @Test
   public void testConnectionFactory() throws Exception {
-    BasicQpidJmsImplementation vendor = createVendorImpl("amqp://localhost:5672");
-    assertNotNull(vendor.createConnectionFactory());
+    EmbeddedAMQP broker = new EmbeddedAMQP();
+    broker.start();
+    JmsConnection connection = configureForTests(new JmsConnection(), broker);
+    try {
+      start(connection);
+      assertNotNull(connection.currentConnection());
+      assertTrue(connection.currentConnection() instanceof javax.jms.Connection);
+      assertNotNull(connection.currentConnection().getMetaData());
+    } finally {
+      stop(connection);
+      broker.destroy();
+    }
   }
+
+//  @Test
+//  public void testConnectionFactory() throws Exception {
+//    BasicQpidJmsImplementation vendor = createVendorImpl("amqp://localhost:5672");
+//    assertNotNull(vendor.createConnectionFactory());
+//  }
 
   @Test
   public void testConnectionFactory_withException() throws Exception {

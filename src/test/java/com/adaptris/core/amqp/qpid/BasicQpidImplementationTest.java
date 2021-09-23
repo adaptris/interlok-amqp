@@ -9,19 +9,14 @@ import javax.jms.JMSException;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.adaptris.core.BaseCase;
 import com.adaptris.core.jms.JmsConnection;
 import com.adaptris.core.jms.activemq.BasicActiveMqImplementation;
+import com.adaptris.interlok.junit.scaffolding.BaseCase;
 import com.adaptris.util.TimeInterval;
 
 public class BasicQpidImplementationTest extends BaseCase {
 
   private static Logger log = LoggerFactory.getLogger(BasicQpidImplementationTest.class);
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
   
   @Test
   public void testConnectionFactory() throws Exception {
