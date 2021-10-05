@@ -1,1 +1,2 @@
-rootProject.name = 'interlok-amqp'
+rootProject.name = 'interlok-amqp-parent'
+include 'interlok-amqp'

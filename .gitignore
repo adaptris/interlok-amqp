@@ -29,3 +29,5 @@ bin
 gradle.properties
 src/main/generated
 .gradle
+unit-tests.properties
+unit-tests.properties.resolved
