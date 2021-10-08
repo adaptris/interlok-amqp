@@ -107,7 +107,7 @@ public class BasicConsumerTest extends ExampleConsumerCase {
 
   // Will be overriden by interop tests.
   protected void checkEnabled() {
-    JunitConfig.rmqTestsEnabled();
+    JunitConfig.abortIfNotEnabled();
   }
   
   // Will be overriden by interop tests.

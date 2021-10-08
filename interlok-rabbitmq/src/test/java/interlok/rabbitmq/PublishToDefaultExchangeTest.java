@@ -17,8 +17,8 @@ public class PublishToDefaultExchangeTest extends ExampleServiceCase {
 
   @Test
   public void testPublish() throws Exception {
-    checkEnabled();
-    String brokerUrl = brokerURL();
+    JunitConfig.abortIfNotEnabled();
+    String brokerUrl = JunitConfig.brokerURL();
     String queueName = NAME_GENERATOR.safeUUID();
     
     RabbitMqConnection c = new RabbitMqConnection().withFactoryBuilder(
@@ -65,11 +65,4 @@ public class PublishToDefaultExchangeTest extends ExampleServiceCase {
     return new PublishToDefaultExchange().withQueue("MyQueue").withConnection(c);
   }
 
-  protected void checkEnabled() {
-    JunitConfig.rmqTestsEnabled();
-  }
-  
-  protected String brokerURL() {
-    return JunitConfig.brokerURL();
-  }
 }

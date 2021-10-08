@@ -18,12 +18,20 @@ public class JunitConfig {
   private static final String CLOUDAMQP_ENV = "CLOUDAMQP_URL";
   
   
-  public static void rmqTestsEnabled() {
+  public static void abortIfNotEnabled() {
     if (!cloudAMQP()) {
       assumeTrue(BooleanUtils.toBoolean(BaseCase.getConfiguration(TESTS_ENABLED)));
     }
   }
 
+  public static boolean nonMockTests() {
+    if (!cloudAMQP()) {
+      return BooleanUtils.toBoolean(BaseCase.getConfiguration(TESTS_ENABLED));
+    }
+    return cloudAMQP();
+  }
+
+  
   private static boolean cloudAMQP() {
     return StringUtils.isNotBlank(System.getenv(CLOUDAMQP_ENV));
   }
