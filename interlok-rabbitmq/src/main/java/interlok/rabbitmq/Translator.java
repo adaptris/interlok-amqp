@@ -33,12 +33,15 @@ import com.rabbitmq.client.Envelope;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+/** Translating between {@link AdaptrisMessage} and their RabbitMQ Equivalents.
+ * 
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Translator {
 
-  public static final EnvelopeHandler IGNORE_ENVELOPE = (e, m) -> {}; 
-  public static final BasicPropertiesHandler IGNORE_PROPERTIES = (e, m) -> {}; 
-  public static final BasicPropertiesBuilder NO_BASIC_PROPERTIES = (msg) -> null;
+  static final EnvelopeHandler IGNORE_ENVELOPE = (e, m) -> {}; 
+  static final BasicPropertiesHandler IGNORE_PROPERTIES = (e, m) -> {}; 
+  static final BasicPropertiesBuilder NO_BASIC_PROPERTIES = (msg) -> null;
   
   // Iteraters over BasicProperties and gives us keys + string values.
   // So, we can expect to do something like
@@ -46,9 +49,9 @@ public class Translator {
   //   Optional.ofNullable(e.getValue().apply(properties)).ifPresent((v) -> msg.addMetadata(e.getKey(), v));
   // }
   // @see HeadersToMetadata
-  public static final Map<String, Function<BasicProperties, String>> PROPERTY_MAP;
+  static final Map<String, Function<BasicProperties, String>> PROPERTY_MAP;
   
-  public static final Map<String, Function<Envelope, String>> ENVELOPE_MAP;
+  static final Map<String, Function<Envelope, String>> ENVELOPE_MAP;
   
   static {
     HashMap<String, Function<BasicProperties, String>> props = new HashMap<>();
@@ -127,7 +130,7 @@ public class Translator {
   }
   
   /**
-   * Create BasicProperties from an AdaptrisMessage
+   * Create {@code BasicProperties} from an {@link AdaptrisMessage}
    * 
    */
   @FunctionalInterface
@@ -136,7 +139,7 @@ public class Translator {
   }
 
   /**
-   * Handle the {@code Delivery#getProperties()}.
+   * Transfer the contents of {@code Delivery#getProperties()} into the {@link AdaptrisMessage}
    * 
    */
   @FunctionalInterface
@@ -145,7 +148,7 @@ public class Translator {
   }
 
   /**
-   * Handle the {@code Delivery#getEnvelope()}.
+   * Transfer the contents of {@code Delivery#getEnvelope()} into the {@link AdaptrisMessage}
    * 
    */
   @FunctionalInterface

@@ -49,7 +49,7 @@ public class BasicConsumer extends AdaptrisMessageConsumerImp {
    * The queue to consume from.
    * 
    */
-  @NotBlank
+  @NotBlank(message = "Queue may not be blank")
   @Getter
   @Setter
   private String queue;

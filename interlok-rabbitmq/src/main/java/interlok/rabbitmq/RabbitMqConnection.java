@@ -25,7 +25,7 @@ import lombok.Setter;
 public class RabbitMqConnection extends AdaptrisConnectionImp implements ConnectionWrapper {
 
   /** Configures the underlying {@code com.rabbitmq.client.ConnectionFactory} which is responsible for 
-   * creating {@code Connections} and {@code Channels}.
+   * creating {@code Connection}
    */
   @Getter
   @Setter
@@ -75,6 +75,12 @@ public class RabbitMqConnection extends AdaptrisConnectionImp implements Connect
   @SuppressWarnings("unchecked")
   public <T extends RabbitMqConnection> T withFactoryBuilder(ConnectionFactoryBuilder builder) {
     setFactoryBuilder(builder);
+    return (T) this;
+  }
+  
+  @SuppressWarnings("unchecked")
+  public <T extends RabbitMqConnection> T withErrorHandler(ExceptionHandlerImpl excHandler) {
+    setConnectionErrorHandler(excHandler);
     return (T) this;
   }
 }

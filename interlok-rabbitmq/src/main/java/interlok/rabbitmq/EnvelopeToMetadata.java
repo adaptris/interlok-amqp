@@ -4,6 +4,7 @@ import static interlok.rabbitmq.Translator.ENVELOPE_MAP;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.core.AdaptrisMessage;
 import com.rabbitmq.client.Envelope;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
  * 
  */
 @XStreamAlias("rabbitmq-envelope-to-metadata")
+@ComponentProfile(summary = "Add Envelope properties as AdaptrisMessage metadata", since="4.3.0")
 @NoArgsConstructor
 public class EnvelopeToMetadata implements EnvelopeHandler {
   

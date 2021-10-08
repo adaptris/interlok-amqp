@@ -1,22 +1,24 @@
 package interlok.rabbitmq;
 
-import java.nio.charset.StandardCharsets;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import org.apache.commons.lang3.ObjectUtils;
+import javax.validation.constraints.NotNull;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import com.adaptris.annotation.AdapterComponent;
+import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.annotation.InputFieldHint;
+import com.adaptris.core.AdaptrisConnection;
 import com.adaptris.core.AdaptrisMessage;
+import com.adaptris.core.ConnectedService;
 import com.adaptris.core.CoreException;
-import com.adaptris.core.ProduceException;
-import com.adaptris.core.ProduceOnlyProducerImp;
+import com.adaptris.core.ServiceException;
+import com.adaptris.core.ServiceImp;
 import com.adaptris.core.util.ExceptionHelper;
-import com.adaptris.core.util.InputFieldExpression;
+import com.adaptris.core.util.LifecycleHelper;
 import com.adaptris.interlok.util.Args;
-import com.adaptris.interlok.util.Closer;
-import com.rabbitmq.client.Channel;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import interlok.rabbitmq.Translator.BasicPropertiesBuilder;
 import lombok.Getter;
@@ -24,102 +26,180 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Publishes a message to the default exchange.
+ * Wraps {@link StandardMessageProducer} as a service for discoverability purposes.
  * <p>
  * This is the simplest way to publish a message to RabbitMQ to an exchange of {@code ""} which is
  * equivalent to the default exchange.
  * </p>
  * <p>
- * If there is metadata configured to be passed in then a {@code BasicProperties} object will be
- * created where the headers contain the metadata. No attempt will be made to configure other
- * property likes content-type etc.
+ * It does not expose all the configuration possible to {@link StandardMessageProducer} and is
+ * included as a convenience to simply publish a message to a RabbitMQ Queue. It does expose a
+ * {@link RabbitMqConnection} as configuration so you will have the opportunity to <i>share
+ * connections</i>.
  * </p>
+ * 
  */
 @XStreamAlias("rabbitmq-publish-to-default-exchange")
+@ComponentProfile(summary = "Put the message payload onto an AMQP Queue",
+    recommended = {RabbitMqConnection.class}, since = "4.3.0", tag = "amqp,rabbitmq")
+@AdapterComponent
+@DisplayOrder(order = {"queue", "behaviour", "connection", "propertyBuilder"})
 @NoArgsConstructor
-@ComponentProfile(summary = "Publishes a message to the default exchange", tag = "amqp, rabbitmq", since = "4.3.0")
-@DisplayOrder(order = {"queue", "metadataFilter"})
-public class PublishToDefaultExchange extends ProduceOnlyProducerImp {
+public class PublishToDefaultExchange extends ServiceImp implements ConnectedService {
+
+
+  /**
+   * Controls behaviour when publishing the messsage.
+   */
+  public enum SuccessFailureBehaviour {
+    /**
+     * Behave like a normal service and throw an exception on failure.
+     * 
+     */
+    TRADITIONAL {
+
+      @Override
+      void handleSuccess(AdaptrisMessage msg) {}
+
+      @Override
+      void handleFailure(AdaptrisMessage msg, Exception e) throws ServiceException {
+        throw ExceptionHelper.wrapServiceException(e);
+      }
+
+    },
+    /**
+     * Never throw an exception and add values against {@link MetadataConstants#RMQ_PUBLISH_STATUS}
+     * to indicate success/failure.
+     * 
+     */
+    NO_EXCEPTION {
+      @Override
+      void handleSuccess(AdaptrisMessage msg) {
+        msg.addMessageHeader(MetadataConstants.RMQ_PUBLISH_STATUS, "success");
+      }
+
+      @Override
+      void handleFailure(AdaptrisMessage msg, Exception e) throws ServiceException {
+        msg.addMessageHeader(MetadataConstants.RMQ_PUBLISH_STATUS,
+            "failed, message:" + ExceptionUtils.getStackTrace(e));
+      }
+
+    };
+
+
+    abstract void handleSuccess(AdaptrisMessage msg);
+
+    abstract void handleFailure(AdaptrisMessage msg, Exception e) throws ServiceException;
+
+  }
 
   /**
    * The queue to publish to.
-   * 
    */
-  @InputFieldHint(expression = true)
-  @NotBlank
   @Getter
   @Setter
+  @NotBlank(message = "The queue is required so we know where to publish to")
+  @InputFieldHint(expression = true)
   private String queue;
-  
-  /** How to build the required {@code BasicProperties} if required.
-   *  <p>The default if not explicitly specified is to return a {@code null} object which uses the default behaviour of RabbitMQ</p>
+
+  /**
+   * How to build the required {@code BasicProperties} if required.
+   * <p>
+   * The default if not explicitly specified is to return a {@code null} object which uses the
+   * default behaviour of RabbitMQ.
+   * </p>
    */
   @Getter
   @Setter
   @InputFieldDefault(value = "no properties")
-  @Valid  
+  @Valid
+  @AdvancedConfig(rare = true)
   private BasicPropertiesBuilder propertyBuilder;
-  
-  // Channels aren't thread safe
-  private transient Channel rabbitChannel = null;
-  private transient boolean queueExpression = true;
-  
+
+
+  /**
+   * What to do after publishing the message depending on whether that was successful or not.
+   * <p>
+   * <ul>
+   * <li>TRADITIONAL : act like a traditional service and throw an exception if publishing was not sucessful</li>
+   * <li>NO_EXCEPTION: Never throw an exception, add metadata against the key
+   * {@value MetadataConstants#RMQ_PUBLISH_STATUS} indicating success or failure. Failure will
+   * contain the stacktrace from the exception but no exception will be thrown by the service.</li>
+   * </ul>
+   * </p>
+   */
+  @Getter
+  @Setter
+  @InputFieldDefault(value = "TRADITIONAL")
+  @NotNull(message = "behaviour should be one of the availale enums")
+  private SuccessFailureBehaviour behaviour = SuccessFailureBehaviour.TRADITIONAL;
+
+  /**
+   * The RabbitMQ Connection.
+   * 
+   */
+  @Getter
+  @Setter
+  @Valid
+  @NotNull(message = "No connection means we don't know how to connect to RabbitMQ")
+  private AdaptrisConnection connection;
+
+  private transient StandardMessageProducer wrappedProducer;
+
   @Override
-  public void prepare() throws CoreException {
+  public void doService(AdaptrisMessage msg) throws ServiceException {
+    try {
+      wrappedProducer.produce(msg);
+      getBehaviour().handleSuccess(msg);
+    } catch (Exception e) {
+      getBehaviour().handleFailure(msg, e);
+    }
+  }
+
+  @Override
+  public final void prepare() throws CoreException {
+    Args.notNull(getConnection(), "connection");
     Args.notBlank(getQueue(), "queue");
+    wrappedProducer = new StandardMessageProducer().withPropertyBuilder(getPropertyBuilder())
+        .withQueue(getQueue());
+    LifecycleHelper.prepare(wrappedProducer);
+    LifecycleHelper.prepare(getConnection());
+  }
+
+  @Override
+  public final void initService() throws CoreException {
+    connection.addExceptionListener(this);
+    connection.addMessageProducer(wrappedProducer);
+    LifecycleHelper.init(getConnection());
+    LifecycleHelper.init(wrappedProducer);
+
+  }
+
+  @Override
+  public final void closeService() {
+    LifecycleHelper.close(getConnection());
+    LifecycleHelper.close(wrappedProducer);
   }
 
   @Override
   public void start() throws CoreException {
-    try {
-      rabbitChannel =
-          retrieveConnection(ConnectionWrapper.class).wrappedConnection().createChannel();
-      // If the queue isn't an expression we can declare it now and keep a flag as to 
-      // whether we want to re-declare. QueueDeclaration shouldn't be an expensive
-      // operation, but why do it more than you need to?
-      if (!InputFieldExpression.isExpression(getQueue())) {
-        rabbitChannel.queueDeclare(getQueue(), true, false, false, null);
-        queueExpression = false;
-      }
-    } catch (Exception e) {
-      throw ExceptionHelper.wrapCoreException(e);
-    }
+    LifecycleHelper.start(getConnection());
+    LifecycleHelper.start(wrappedProducer);
   }
-
 
   @Override
   public void stop() {
-    Closer.closeQuietly(rabbitChannel);
+    LifecycleHelper.stop(getConnection());
+    LifecycleHelper.stop(wrappedProducer);
   }
 
-  @Override
-  protected void doProduce(AdaptrisMessage msg, String endpoint) throws ProduceException {
-    try {
-      if (queueExpression) {
-        rabbitChannel.queueDeclare(endpoint, true, false, false, null);
-      }
-      rabbitChannel.basicPublish("", endpoint, propertyBuilder().build(msg), msg.getContent().getBytes(StandardCharsets.UTF_8));
-    } catch (Exception e) {
-      throw ExceptionHelper.wrapProduceException(e);
-    }
-  }
-
-  private BasicPropertiesBuilder propertyBuilder() {
-    return ObjectUtils.defaultIfNull(getPropertyBuilder(), Translator.NO_BASIC_PROPERTIES);
-  }
-  
-  public PublishToDefaultExchange withPropertyBuilder(BasicPropertiesBuilder b) {
-    setPropertyBuilder(b);
+  public PublishToDefaultExchange withConnection(RabbitMqConnection c) {
+    setConnection(c);
     return this;
   }
-  
-  @Override
-  public String endpoint(AdaptrisMessage msg) throws ProduceException {
-    return msg.resolve(getQueue());
-  }
 
-  public PublishToDefaultExchange withQueue(String s) {
-    setQueue(s);
+  public PublishToDefaultExchange withQueue(String q) {
+    setQueue(q);
     return this;
   }
 }

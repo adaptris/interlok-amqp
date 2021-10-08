@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import org.apache.commons.lang3.StringUtils;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.annotation.InputFieldHint;
 import com.adaptris.core.AdaptrisMessage;
@@ -21,11 +22,12 @@ import lombok.Setter;
  */
 @XStreamAlias("rabbitmq-properties-to-metadata")
 @NoArgsConstructor
+@ComponentProfile(summary = "Store headers from an incoming message as AdaptrisMessage metadata", since="4.3.0")
 public class PropertiesToMetadata implements BasicPropertiesHandler {
 
 
   /**
-   * Set the prefix (if any) for metadata keys when retrieving {@code BasicProperties#getHeaders()}.
+   * Set the prefix (if any) for metadata keys when converting {@code BasicProperties#getHeaders()}.
    * <p>
    * Note that standard properties such as {@code BasicProperties#getClusterId()} will always be
    * added with the appropriate key from {@link MetadataConstants}. This allows us to have

@@ -2,19 +2,19 @@ package interlok.rabbitmq;
 
 import static interlok.rabbitmq.JunitConfig.MESSAGE_BODY;
 import static interlok.rabbitmq.JunitConfig.NAME_GENERATOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
-import com.adaptris.core.StandaloneProducer;
-import com.adaptris.core.metadata.NoOpMetadataFilter;
+import com.adaptris.core.ServiceException;
 import com.adaptris.core.util.LifecycleHelper;
-import com.adaptris.interlok.junit.scaffolding.ExampleProducerCase;
+import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
+import interlok.rabbitmq.PublishToDefaultExchange.SuccessFailureBehaviour;
 
-public class PublishToDefaultExchangeTest extends ExampleProducerCase {
+public class PublishToDefaultExchangeTest extends ExampleServiceCase {
 
-  private static final String METADATA_KEY = "MY_QUEUE";
-
-  
   @Test
   public void testPublish() throws Exception {
     checkEnabled();
@@ -23,10 +23,8 @@ public class PublishToDefaultExchangeTest extends ExampleProducerCase {
     
     RabbitMqConnection c = new RabbitMqConnection().withFactoryBuilder(
         new SimpleConnectionFactoryBuilder().withBrokerUrl(brokerUrl));
-    c.setConnectionErrorHandler(new AlwaysRestartExceptionHandler());
-    
-    PublishToDefaultExchange p = new PublishToDefaultExchange().withQueue(queueName);      
-    StandaloneProducer service = new StandaloneProducer(c, p);
+
+    PublishToDefaultExchange service = new PublishToDefaultExchange().withQueue(queueName).withConnection(c);
     
     try (BlancDeBouscat reader = new BlancDeBouscat(brokerUrl, queueName)) {
       LifecycleHelper.initAndStart(service);
@@ -39,69 +37,38 @@ public class PublishToDefaultExchangeTest extends ExampleProducerCase {
   }
 
   @Test
-  public void testPublish_ResolvedQueue() throws Exception {
-    checkEnabled();
-    String brokerUrl = brokerURL();
-    String queueName = NAME_GENERATOR.safeUUID();
-    
-    RabbitMqConnection c =
-        new RabbitMqConnection().withFactoryBuilder(new SimpleConnectionFactoryBuilder()
-            .withBrokerUrl(brokerUrl));
-    PublishToDefaultExchange p = new PublishToDefaultExchange().withQueue("%message{" + METADATA_KEY + "}")
-        .withPropertyBuilder(new MetadataToProperties());
-    StandaloneProducer service = new StandaloneProducer(c, p);
-    try (BlancDeBouscat reader = new BlancDeBouscat(brokerUrl, queueName)) {
-      LifecycleHelper.initAndStart(service);
-      AdaptrisMessage msg = new DefaultMessageFactory().newMessage(MESSAGE_BODY);
-      msg.addMessageHeader(METADATA_KEY, queueName);
-      service.doService(msg);
-      reader.getAndVerify(MESSAGE_BODY);
-    } finally {
-      LifecycleHelper.stopAndClose(service);
-    }
+  public void testHandler_Normal() throws Exception {
+    SuccessFailureBehaviour behaviour = SuccessFailureBehaviour.TRADITIONAL;
+    AdaptrisMessage msg = new DefaultMessageFactory().newMessage(MESSAGE_BODY);
+    behaviour.handleSuccess(msg);
+    assertThrows(ServiceException.class, () -> {
+      behaviour.handleFailure(msg, new Exception("myException"));
+    });      
   }
 
   @Test
-  public void testPublish_IncludesMetadata() throws Exception {
-    checkEnabled();
-    String brokerUrl = brokerURL();
-    String queueName = NAME_GENERATOR.safeUUID();
-    
-    RabbitMqConnection c =
-        new RabbitMqConnection().withFactoryBuilder(new SimpleConnectionFactoryBuilder()
-            .withBrokerUrl(brokerUrl));  
-    PublishToDefaultExchange p = new PublishToDefaultExchange().withQueue(queueName)
-        .withPropertyBuilder(new MetadataToProperties().withFilter(new NoOpMetadataFilter()));
-    StandaloneProducer service = new StandaloneProducer(c, p);
-    
-    
-    try (BlancDeBouscat reader = new BlancDeBouscat(brokerUrl, queueName)) {
-      LifecycleHelper.initAndStart(service);
-      AdaptrisMessage msg = new DefaultMessageFactory().newMessage(MESSAGE_BODY);
-      msg.addMessageHeader(METADATA_KEY, queueName);      
-      service.doService(msg);
-      reader.getAndVerify(MESSAGE_BODY, msg.getMetadata());
-    } finally {
-      LifecycleHelper.stopAndClose(service);
-    }
+  public void testHandler_NoException() throws Exception {
+    SuccessFailureBehaviour behaviour = SuccessFailureBehaviour.NO_EXCEPTION;
+    AdaptrisMessage msg = new DefaultMessageFactory().newMessage(MESSAGE_BODY);
+    behaviour.handleSuccess(msg);
+    assertEquals("success", msg.getMetadataValue(MetadataConstants.RMQ_PUBLISH_STATUS));
+    behaviour.handleFailure(msg, new Exception("myException"));
+    assertTrue(msg.getMetadataValue(MetadataConstants.RMQ_PUBLISH_STATUS).contains("myException"));
   }
 
-
+  
   @Override
-  protected StandaloneProducer retrieveObjectForSampleConfig() {
+  protected PublishToDefaultExchange retrieveObjectForSampleConfig() {
     RabbitMqConnection c =
         new RabbitMqConnection().withFactoryBuilder(new SimpleConnectionFactoryBuilder()
             .withBrokerUrl("amqp://admin:admin@localhost:5672/vhost"));
-    PublishToDefaultExchange p = new PublishToDefaultExchange().withQueue("MyQueue");
-    return new StandaloneProducer(c, p);
+    return new PublishToDefaultExchange().withQueue("MyQueue").withConnection(c);
   }
 
-  // Will be overriden by interop tests.
   protected void checkEnabled() {
     JunitConfig.rmqTestsEnabled();
   }
   
-  // Will be overriden by interop tests.
   protected String brokerURL() {
     return JunitConfig.brokerURL();
   }
