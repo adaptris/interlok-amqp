@@ -51,7 +51,7 @@ public class PublishToDefaultExchange extends ServiceImp implements ConnectedSer
   /**
    * Controls behaviour when publishing the messsage.
    */
-  public enum SuccessFailureBehaviour {
+  public enum Behaviour {
     /**
      * Behave like a normal service and throw an exception on failure.
      * 
@@ -121,7 +121,7 @@ public class PublishToDefaultExchange extends ServiceImp implements ConnectedSer
    * What to do after publishing the message depending on whether that was successful or not.
    * <p>
    * <ul>
-   * <li>TRADITIONAL : act like a traditional service and throw an exception if publishing was not sucessful</li>
+   * <li>TRADITIONAL : act like a traditional service and throw an exception if publishing was not successful</li>
    * <li>NO_EXCEPTION: Never throw an exception, add metadata against the key
    * {@value MetadataConstants#RMQ_PUBLISH_STATUS} indicating success or failure. Failure will
    * contain the stacktrace from the exception but no exception will be thrown by the service.</li>
@@ -131,8 +131,8 @@ public class PublishToDefaultExchange extends ServiceImp implements ConnectedSer
   @Getter
   @Setter
   @InputFieldDefault(value = "TRADITIONAL")
-  @NotNull(message = "behaviour should be one of the availale enums")
-  private SuccessFailureBehaviour behaviour = SuccessFailureBehaviour.TRADITIONAL;
+  @NotNull(message = "behaviour should be one of the available enums")
+  private Behaviour behaviour = Behaviour.TRADITIONAL;
 
   /**
    * The RabbitMQ Connection.

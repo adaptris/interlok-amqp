@@ -28,63 +28,71 @@ import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.util.text.DateFormatUtil;
 import com.rabbitmq.client.AMQP.BasicProperties;
+import com.rabbitmq.client.AMQP.BasicProperties.Builder;
 import com.rabbitmq.client.Delivery;
 import com.rabbitmq.client.Envelope;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-/** Translating between {@link AdaptrisMessage} and their RabbitMQ Equivalents.
+/**
+ * Translating between {@link AdaptrisMessage} and their RabbitMQ Equivalents.
  * 
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Translator {
 
-  static final EnvelopeHandler IGNORE_ENVELOPE = (e, m) -> {}; 
-  static final BasicPropertiesHandler IGNORE_PROPERTIES = (e, m) -> {}; 
+  static final EnvelopeHandler IGNORE_ENVELOPE = (e, m) -> {
+  };
+  static final BasicPropertiesHandler IGNORE_PROPERTIES = (e, m) -> {
+  };
   static final BasicPropertiesBuilder NO_BASIC_PROPERTIES = (msg) -> null;
   
   // Iteraters over BasicProperties and gives us keys + string values.
   // So, we can expect to do something like
   // for (Map.Key e : map) {
-  //   Optional.ofNullable(e.getValue().apply(properties)).ifPresent((v) -> msg.addMetadata(e.getKey(), v));
+  // Optional.ofNullable(e.getValue().apply(properties)).ifPresent((v) ->
+  // msg.addMetadata(e.getKey(), v));
   // }
   // @see HeadersToMetadata
   static final Map<String, Function<BasicProperties, String>> PROPERTY_MAP;
-  
+
   static final Map<String, Function<Envelope, String>> ENVELOPE_MAP;
-  
+
   static {
     HashMap<String, Function<BasicProperties, String>> props = new HashMap<>();
     props.put(RMQ_APP_ID, (p) -> p.getAppId());
-    props.put(RMQ_CONTENT_ENCODING, (p) -> p.getContentEncoding());
     props.put(RMQ_CLUSTER_ID, (p) -> p.getClusterId());
     // It's an int, so can't be null.
     props.put(RMQ_CLASS_ID, (p) -> String.valueOf(p.getClassId()));
+    props.put(RMQ_CONTENT_ENCODING, (p) -> p.getContentEncoding());
     props.put(RMQ_CONTENT_TYPE, (p) -> p.getContentType());
     props.put(RMQ_CORRELATION_ID, (p) -> p.getCorrelationId());
     // Return null if Integer is null (since it might be).
-    props.put(RMQ_DELIVERY_MODE, (p) -> Optional.ofNullable(p.getDeliveryMode()).map((i) -> i.toString()).orElse(null));
+    props.put(RMQ_DELIVERY_MODE,
+        (p) -> Optional.ofNullable(p.getDeliveryMode()).map((i) -> i.toString()).orElse(null));
     props.put(RMQ_EXPIRATION, (p) -> p.getExpiration());
     props.put(RMQ_MESSAGE_ID, (p) -> p.getMessageId());
     // Return null if Integer is null (since it might be).
-    props.put(RMQ_PRIORITY, (p) -> Optional.ofNullable(p.getPriority()).map((i) -> i.toString()).orElse(null));
+    props.put(RMQ_PRIORITY,
+        (p) -> Optional.ofNullable(p.getPriority()).map((i) -> i.toString()).orElse(null));
     props.put(RMQ_REPLY_TO, (p) -> p.getReplyTo());
     // Return null if Date is null (since it might be).
-    props.put(RMQ_TIMESTAMP, (p) -> Optional.ofNullable(p.getTimestamp()).map((d) -> DateFormatUtil.format(d)).orElse(null));
-    props.put(RMQ_TYPE, (p)-> p.getType());
+    props.put(RMQ_TIMESTAMP, (p) -> Optional.ofNullable(p.getTimestamp())
+        .map((d) -> DateFormatUtil.format(d)).orElse(null));
+    props.put(RMQ_TYPE, (p) -> p.getType());
     props.put(RMQ_USER_ID, (p) -> p.getUserId());
     PROPERTY_MAP = Collections.unmodifiableMap(props);
-    
+
     HashMap<String, Function<Envelope, String>> env = new HashMap<>();
     env.put(RMQ_DELIVERY_TAG, (e) -> String.valueOf(e.getDeliveryTag()));
     env.put(RMQ_EXCHANGE, (e) -> e.getExchange());
     env.put(RMQ_ROUTING_KEY, (e) -> e.getRoutingKey());
-    env.put(RMQ_IS_REDELIVERY, (e) -> BooleanUtils.toStringTrueFalse(e.isRedeliver()));   
+    env.put(RMQ_IS_REDELIVERY, (e) -> BooleanUtils.toStringTrueFalse(e.isRedeliver()));
     ENVELOPE_MAP = Collections.unmodifiableMap(env);
-    
+
   }
-  
-  
+
+
   /**
    * Create an {@link AdaptrisMessage} from the incoming {@code Delivery}.
    * 
@@ -123,12 +131,17 @@ public class Translator {
    */
   public static AdaptrisMessage build(Delivery delivery, BasicPropertiesHandler propsHandler,
       EnvelopeHandler envHandler, AdaptrisMessageFactory mf) {
-    final AdaptrisMessage msg = AdaptrisMessageFactory.defaultIfNull(mf).newMessage(delivery.getBody());
-    Optional.ofNullable(delivery.getProperties()).ifPresent((p) -> { propsHandler.handle(p, msg); });
-    Optional.ofNullable(delivery.getEnvelope()).ifPresent((e) -> { envHandler.handle(e, msg); });    
+    final AdaptrisMessage msg =
+        AdaptrisMessageFactory.defaultIfNull(mf).newMessage(delivery.getBody());
+    Optional.ofNullable(delivery.getProperties()).ifPresent((p) -> {
+      propsHandler.handle(p, msg);
+    });
+    Optional.ofNullable(delivery.getEnvelope()).ifPresent((e) -> {
+      envHandler.handle(e, msg);
+    });
     return msg;
   }
-  
+
   /**
    * Create {@code BasicProperties} from an {@link AdaptrisMessage}
    * 
@@ -136,6 +149,50 @@ public class Translator {
   @FunctionalInterface
   public interface BasicPropertiesBuilder {
     BasicProperties build(AdaptrisMessage msg);
+
+  }
+
+  /**
+   * Creates a {@code BasicProperties.Builder} object from {@link AdaptrisMessage}.
+   *
+   * <p>
+   * This allows for composable implementations that want to build specific properties that cannot
+   * easily be derived from metadata.
+   * </p>
+   */
+  @FunctionalInterface
+  public interface PropertiesBuilderFactory {
+    BasicProperties.Builder build(AdaptrisMessage msg);
+    
+    /**
+     * Convenience method to build a Builder.
+     * <p>Create a map that contains the some/all keys from {@link MetadataConstants} and this will do something sensible.
+     * </p>
+     */
+    default BasicProperties.Builder build(Map<String, String> entries) {
+      Builder builder = new BasicProperties.Builder();
+      Optional.ofNullable(entries.get(RMQ_APP_ID)).ifPresent((e) -> builder.appId(e));
+      // Can't set the classId...
+      // Optional.ofNullable(entries.get(RMQ_CLASS_ID))...;
+      Optional.ofNullable(entries.get(RMQ_CLUSTER_ID)).ifPresent((e) -> builder.clusterId(e));
+
+      Optional.ofNullable(entries.get(RMQ_CONTENT_ENCODING)).ifPresent((e) -> builder.contentEncoding(e));
+      Optional.ofNullable(entries.get(RMQ_CONTENT_TYPE)).ifPresent((e) -> builder.contentType(e));
+      Optional.ofNullable(entries.get(RMQ_CORRELATION_ID)).ifPresent((e) -> builder.correlationId(e));
+      Optional.ofNullable(entries.get(RMQ_DELIVERY_MODE)).ifPresent((e) -> builder.deliveryMode(Integer.valueOf(e)));
+
+      Optional.ofNullable(entries.get(RMQ_EXPIRATION)).ifPresent((e) -> builder.expiration(e));
+      Optional.ofNullable(entries.get(RMQ_MESSAGE_ID)).ifPresent((e) -> builder.messageId(e));
+      Optional.ofNullable(entries.get(RMQ_PRIORITY)).ifPresent((e) -> builder.priority(Integer.valueOf(e)));
+
+      Optional.ofNullable(entries.get(RMQ_REPLY_TO)).ifPresent((e) -> builder.replyTo(e));
+      Optional.ofNullable(entries.get(RMQ_TIMESTAMP)).ifPresent((e) -> builder.timestamp(DateFormatUtil.parse(e)));
+      Optional.ofNullable(entries.get(RMQ_TYPE)).ifPresent((e) -> builder.type(e));
+      Optional.ofNullable(entries.get(RMQ_USER_ID)).ifPresent((e) -> builder.userId(e));
+
+      return builder;
+    }
+    
   }
 
   /**
@@ -155,5 +212,5 @@ public class Translator {
   public interface EnvelopeHandler {
     void handle(Envelope envelope, AdaptrisMessage msg);
   }
-  
+
 }

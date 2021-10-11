@@ -11,7 +11,7 @@ import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.util.LifecycleHelper;
 import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
-import interlok.rabbitmq.PublishToDefaultExchange.SuccessFailureBehaviour;
+import interlok.rabbitmq.PublishToDefaultExchange.Behaviour;
 
 public class PublishToDefaultExchangeTest extends ExampleServiceCase {
 
@@ -38,7 +38,7 @@ public class PublishToDefaultExchangeTest extends ExampleServiceCase {
 
   @Test
   public void testHandler_Normal() throws Exception {
-    SuccessFailureBehaviour behaviour = SuccessFailureBehaviour.TRADITIONAL;
+    Behaviour behaviour = Behaviour.TRADITIONAL;
     AdaptrisMessage msg = new DefaultMessageFactory().newMessage(MESSAGE_BODY);
     behaviour.handleSuccess(msg);
     assertThrows(ServiceException.class, () -> {
@@ -48,7 +48,7 @@ public class PublishToDefaultExchangeTest extends ExampleServiceCase {
 
   @Test
   public void testHandler_NoException() throws Exception {
-    SuccessFailureBehaviour behaviour = SuccessFailureBehaviour.NO_EXCEPTION;
+    Behaviour behaviour = Behaviour.NO_EXCEPTION;
     AdaptrisMessage msg = new DefaultMessageFactory().newMessage(MESSAGE_BODY);
     behaviour.handleSuccess(msg);
     assertEquals("success", msg.getMetadataValue(MetadataConstants.RMQ_PUBLISH_STATUS));
