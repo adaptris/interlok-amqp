@@ -3,6 +3,7 @@ package interlok.rabbitmq;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.BooleanUtils;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.InputFieldDefault;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
@@ -13,10 +14,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Declaring an explicit exchange. 
+ * Declaring an explicit exchange.
+ * <p>Depending on your RabbitMQ configuration you may wish to explicitly declare an exchange that is not the 'default exchange'
+ * when producing messages.
+ * </p> 
  */
 @XStreamAlias("rabbitmq-explicit-exchange-declaration")
 @NoArgsConstructor
+@ComponentProfile(summary = "Explicitly declare a RabbitMQ Exchange", since="4.3.0")
 public class ExplicitExchange implements ExchangeDeclaration {
 
   /** The exchange type.

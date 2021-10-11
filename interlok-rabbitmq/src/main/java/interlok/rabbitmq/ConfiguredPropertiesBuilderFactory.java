@@ -15,6 +15,7 @@ import static interlok.rabbitmq.MetadataConstants.RMQ_TYPE;
 import static interlok.rabbitmq.MetadataConstants.RMQ_USER_ID;
 import java.util.HashMap;
 import java.util.Map;
+import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.InputFieldHint;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.util.text.DateFormatUtil;
@@ -36,6 +37,7 @@ import lombok.Setter;
  */
 @XStreamAlias("rabbitmq-configured-properties-builder")
 @NoArgsConstructor
+@ComponentProfile(summary = "Explicitly configure the settings for the 'BasicProperties' when publishing", since = "4.3.0")
 public class ConfiguredPropertiesBuilderFactory implements PropertiesBuilderFactory {
 
   /**
