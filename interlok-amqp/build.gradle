@@ -21,7 +21,7 @@ dependencies {
   api ("org.apache.qpid:proton-jms:0.12.2")
   api ("org.apache.qpid:proton-j:0.33.10")
   api ("com.rabbitmq.jms:rabbitmq-jms:2.3.0")
-  api ("com.rabbitmq:amqp-client:5.13.1")
+  api ("com.rabbitmq:amqp-client:5.14.0")
 
   implementation ("io.netty:netty-buffer:$nettyVersion")
   implementation ("io.netty:netty-common:$nettyVersion")
