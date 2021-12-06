@@ -1,0 +1,21 @@
+## Create a new unit-tests.properties.template.<machine-name>
+# modify these properties in there to enable tests.
+# 
+#
+junit.ConsumerCase.baseDir=@BUILD_DIR@/examples/consumers
+junit.ServiceCase.baseDir=@BUILD_DIR@/examples/services
+junit.ProducerCase.baseDir=@BUILD_DIR@/examples/producers
+junit.WorkflowCase.baseDir=@BUILD_DIR@/examples/workflows
+junit.JmsConsumerExamples.baseDir=@BUILD_DIR@/examples/consumers
+junit.JmsProducerExamples.baseDir=@BUILD_DIR@/examples/producers
+
+# docker run --name rabbitmq -it --rm -p127.0.0.1:5672:5672 -p127.0.0.1:15672:15672 \
+#    -e RABBITMQ_DEFAULT_VHOST=vhost -e RABBITMQ_DEFAULT_USER=admin -e RABBITMQ_DEFAULT_PASS=admin \
+#    -h rabbitmq.local "rabbitmq:3-management-alpine"
+# Will be enough to do the business for local rabbitmq
+
+junit.rabbitmq.tests.enabled=false
+junit.rabbitmq.url=amqp://admin:admin@localhost:5672/vhost
+
+# Or setup a free CloudAMQP account and then you can see the URL on your instance.
+# And then set CLOUDAMQP_URL as an environment variable -> this forces the tests to run.
