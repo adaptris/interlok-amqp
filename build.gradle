@@ -360,6 +360,10 @@ subprojects {
     useJUnitPlatform()
   }
 
+  lombok {
+    version = "1.18.22"
+  }
+  
   javadoc.dependsOn offlinePackageList,umlJavadoc
   check.dependsOn jacocoTestReport
 }
