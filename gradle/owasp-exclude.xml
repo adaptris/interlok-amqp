@@ -8,6 +8,7 @@
     <packageUrl regex="true">^pkg:maven/org\.apache\.qpid/proton\-jms@.*$</packageUrl>
     <cve>CVE-2012-2145</cve>
     <cve>CVE-2012-3467</cve>
+    <cve>CVE-2012-4446</cve>
     <cve>CVE-2012-4458</cve>
     <cve>CVE-2012-4459</cve>
     <cve>CVE-2012-4460</cve>
@@ -35,5 +36,13 @@
      <cve>CVE-2021-21409</cve>
      <cve>CVE-2021-37136</cve>
      <cve>CVE-2021-37137</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+    file name: qpid-amqp-1-0-common-0.32.jar
+	- appears to be false positive.	The vulnerability is on org.apache.qpid:qpid-broker which we are not using.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.apache\.qpid/qpid\-amqp\-1\-0\-common@.*$</packageUrl>
+    <vulnerabilityName>CVE-2017-15701</vulnerabilityName>
   </suppress>
 </suppressions>

@@ -2,15 +2,15 @@ import org.apache.tools.ant.taskdefs.condition.Os
 import org.apache.tools.ant.filters.*
 
 plugins {
-  id 'com.github.spotbugs' version '5.0.5' apply false
-  id "io.freefair.lombok" version "6.3.0" apply false
-  id 'org.owasp.dependencycheck' version '6.5.3' apply false
-  id "org.gradle.test-retry" version "1.3.1" apply false
+  id 'com.github.spotbugs' version '5.0.7' apply false
+  id "io.freefair.lombok" version "6.4.3" apply false
+  id 'org.owasp.dependencycheck' version '7.1.0.1' apply false
+  id "org.gradle.test-retry" version "1.4.0" apply false
 }
 
 ext {
-  interlokCoreVersion = project.findProperty('interlokCoreVersion') ?: '4.4-SNAPSHOT'
-  releaseVersion = project.findProperty('releaseVersion') ?: '4.4-SNAPSHOT'
+  interlokCoreVersion = project.findProperty('interlokCoreVersion') ?: '4.5-SNAPSHOT'
+  releaseVersion = project.findProperty('releaseVersion') ?: '4.5-SNAPSHOT'
   nexusBaseUrl = project.findProperty('nexusBaseUrl') ?: 'https://nexus.adaptris.net/nexus'
   mavenPublishUrl = project.findProperty('mavenPublishUrl') ?: nexusBaseUrl + '/content/repositories/snapshots'
   javadocsBaseUrl = nexusBaseUrl + "/content/sites/javadocs/com/adaptris"
@@ -23,8 +23,8 @@ ext {
 
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '1.7.35'
-  mockitoVersion = '4.3.1'
+  slf4jVersion = '1.7.36'
+  mockitoVersion = '4.6.0'
   junitJupiterVersion = '5.8.2'
 
 }
@@ -360,6 +360,10 @@ subprojects {
     useJUnitPlatform()
   }
 
+  lombok {
+    version = "1.18.22"
+  }
+  
   javadoc.dependsOn offlinePackageList,umlJavadoc
   check.dependsOn jacocoTestReport
 }
