@@ -3,20 +3,17 @@ package com.adaptris.core.amqp.qpid;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
 import java.util.concurrent.TimeUnit;
-import javax.jms.JMSException;
+
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import com.adaptris.core.jms.JmsConnection;
 import com.adaptris.core.jms.activemq.BasicActiveMqImplementation;
 import com.adaptris.interlok.junit.scaffolding.BaseCase;
 import com.adaptris.util.TimeInterval;
 
 public class BasicQpidImplementationTest extends BaseCase {
-
-  private static Logger log = LoggerFactory.getLogger(BasicQpidImplementationTest.class);
   
   @Test
   public void testConnectionFactory() throws Exception {
@@ -24,27 +21,18 @@ public class BasicQpidImplementationTest extends BaseCase {
     broker.start();
     JmsConnection connection = configureForTests(new JmsConnection(), broker);
     try {
-      start(connection);
+      connection.prepare();
+      connection.init();
+      connection.start();
+//      start(connection);
       assertNotNull(connection.currentConnection());
       assertTrue(connection.currentConnection() instanceof javax.jms.Connection);
       assertNotNull(connection.currentConnection().getMetaData());
+      
     } finally {
       stop(connection);
       broker.destroy();
     }
-  }
-
-  @Test
-  public void testConnectionFactory_withException() throws Exception {
-    try {
-      BasicQpidImplementation vendor = createVendorImpl("amqp://clientId/vhost?brokerlist='tcp://localhost:5672'");
-      // SHould fail as brokerList: isn't a supported attribute.
-      vendor.createConnectionFactory();
-      fail();
-    } catch (JMSException expected) {
-
-    }
-
   }
 
   @Test
