@@ -100,7 +100,7 @@ public class EmbeddedAMQP {
   }
 
   public String getBrokerUrl() {
-    return "amqp://localhost:" + amqpPort;
+    return "amqp://localhost:" + amqpPort + "?wireFormat.maxInactivityDuration=0";
   }
 
   public String getLegacyAMQPUrl() {

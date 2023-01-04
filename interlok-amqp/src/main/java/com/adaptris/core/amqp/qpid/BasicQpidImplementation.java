@@ -3,7 +3,7 @@ package com.adaptris.core.amqp.qpid;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 
-import org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl;
+import org.apache.activemq.ActiveMQConnectionFactory;
 
 import com.adaptris.core.jms.JmsConnection;
 import com.adaptris.core.jms.UrlVendorImplementation;
@@ -35,10 +35,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("qpid-basic-amqp-implementation")
 public class BasicQpidImplementation extends UrlVendorImplementation {
 
-  ConnectionFactoryImpl createQpidConnectionFactory() throws JMSException {
-    ConnectionFactoryImpl cf;
+  ConnectionFactory createQpidConnectionFactory() throws JMSException {
+    ConnectionFactory cf;
     try {
-      cf = ConnectionFactoryImpl.createFromURL(getBrokerUrl());
+      cf = new ActiveMQConnectionFactory(getBrokerUrl());
     }
     catch (Exception e) {
       throw new JMSException(e.getMessage());
