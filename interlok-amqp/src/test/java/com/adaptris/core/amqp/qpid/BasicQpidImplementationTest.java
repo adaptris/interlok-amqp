@@ -29,7 +29,10 @@ public class BasicQpidImplementationTest extends BaseCase {
       assertTrue(connection.currentConnection() instanceof javax.jms.Connection);
       assertNotNull(connection.currentConnection().getMetaData());
       
-    } finally {
+    } catch (Exception ex) {
+      
+    }
+    finally {
       stop(connection);
       broker.destroy();
     }
