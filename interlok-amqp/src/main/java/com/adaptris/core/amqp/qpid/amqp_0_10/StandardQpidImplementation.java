@@ -21,7 +21,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * <p>
  * This was built against {@code org.apache.qpid:qpid-client:6.0.1}
  * </p>
- * 
+ *
  * @config qpid-implementation-0-10
  */
 @XStreamAlias("qpid-implementation-0-10")
@@ -31,8 +31,7 @@ public class StandardQpidImplementation extends UrlVendorImplementation {
     AMQConnectionFactory cf;
     try {
       cf = new AMQConnectionFactory(getBrokerUrl());
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new JMSException(e.getMessage());
     }
     return cf;
@@ -45,6 +44,7 @@ public class StandardQpidImplementation extends UrlVendorImplementation {
 
   @Override
   public boolean connectionEquals(VendorImplementationBase vendorImp) {
-    return (vendorImp instanceof StandardQpidImplementation) && super.connectionEquals(vendorImp);
+    return vendorImp instanceof StandardQpidImplementation && super.connectionEquals(vendorImp);
   }
+
 }

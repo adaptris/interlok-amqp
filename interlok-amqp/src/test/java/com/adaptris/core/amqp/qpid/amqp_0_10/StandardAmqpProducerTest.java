@@ -15,19 +15,18 @@ public class StandardAmqpProducerTest extends JmsProducerExample {
 
   @Override
   protected Object retrieveObjectForSampleConfig() {
-
     PtpProducer producer = new PtpProducer().withQueue("SOME_QUEUE_NAME");
     StandaloneProducer result = new StandaloneProducer(configure(new JmsConnection()), producer);
 
     return result;
   }
 
-  protected JmsConnection configure(JmsConnection c) {
-    c.setUserName("BrokerUsername");
-    c.setPassword("BrokerPassword");
-    c.setVendorImplementation(createVendorImpl());
-    c.setConnectionErrorHandler(new JmsConnectionErrorHandler());
-    return c;
+  protected JmsConnection configure(JmsConnection con) {
+    con.setUserName("BrokerUsername");
+    con.setPassword("BrokerPassword");
+    con.setVendorImplementation(createVendorImpl());
+    con.setConnectionErrorHandler(new JmsConnectionErrorHandler());
+    return con;
   }
 
   protected StandardQpidImplementation createVendorImpl() {

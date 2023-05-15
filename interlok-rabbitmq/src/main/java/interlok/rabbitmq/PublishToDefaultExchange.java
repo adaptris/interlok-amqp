@@ -3,7 +3,9 @@ package interlok.rabbitmq;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;
@@ -20,6 +22,7 @@ import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.core.util.LifecycleHelper;
 import com.adaptris.interlok.util.Args;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import interlok.rabbitmq.Translator.BasicPropertiesBuilder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,25 +31,22 @@ import lombok.Setter;
 /**
  * Wraps {@link StandardMessageProducer} as a service for discoverability purposes.
  * <p>
- * This is the simplest way to publish a message to RabbitMQ to an exchange of {@code ""} which is
- * equivalent to the default exchange.
+ * This is the simplest way to publish a message to RabbitMQ to an exchange of {@code ""} which is equivalent to the default exchange.
  * </p>
  * <p>
- * It does not expose all the configuration possible to {@link StandardMessageProducer} and is
- * included as a convenience to simply publish a message to a RabbitMQ Queue. It does expose a
- * {@link RabbitMqConnection} as configuration so you will have the opportunity to <i>share
+ * It does not expose all the configuration possible to {@link StandardMessageProducer} and is included as a convenience to simply publish a
+ * message to a RabbitMQ Queue. It does expose a {@link RabbitMqConnection} as configuration so you will have the opportunity to <i>share
  * connections</i>.
  * </p>
- * 
+ *
  */
 @XStreamAlias("rabbitmq-publish-to-default-exchange")
-@ComponentProfile(summary = "Put the message payload onto an AMQP Queue",
-    recommended = {RabbitMqConnection.class}, since = "4.3.0", tag = "amqp,rabbitmq")
+@ComponentProfile(summary = "Put the message payload onto an AMQP Queue", recommended = {
+    RabbitMqConnection.class }, since = "4.3.0", tag = "amqp,rabbitmq")
 @AdapterComponent
-@DisplayOrder(order = {"queue", "behaviour", "connection", "propertyBuilder"})
+@DisplayOrder(order = { "queue", "behaviour", "connection", "propertyBuilder" })
 @NoArgsConstructor
 public class PublishToDefaultExchange extends ServiceImp implements ConnectedService {
-
 
   /**
    * Controls behaviour when publishing the messsage.
@@ -54,12 +54,13 @@ public class PublishToDefaultExchange extends ServiceImp implements ConnectedSer
   public enum Behaviour {
     /**
      * Behave like a normal service and throw an exception on failure.
-     * 
+     *
      */
     TRADITIONAL {
 
       @Override
-      void handleSuccess(AdaptrisMessage msg) {}
+      void handleSuccess(AdaptrisMessage msg) {
+      }
 
       @Override
       void handleFailure(AdaptrisMessage msg, Exception e) throws ServiceException {
@@ -68,9 +69,8 @@ public class PublishToDefaultExchange extends ServiceImp implements ConnectedSer
 
     },
     /**
-     * Never throw an exception and add values against {@link MetadataConstants#RMQ_PUBLISH_STATUS}
-     * to indicate success/failure.
-     * 
+     * Never throw an exception and add values against {@link MetadataConstants#RMQ_PUBLISH_STATUS} to indicate success/failure.
+     *
      */
     NO_EXCEPTION {
       @Override
@@ -80,12 +80,10 @@ public class PublishToDefaultExchange extends ServiceImp implements ConnectedSer
 
       @Override
       void handleFailure(AdaptrisMessage msg, Exception e) throws ServiceException {
-        msg.addMessageHeader(MetadataConstants.RMQ_PUBLISH_STATUS,
-            "failed, message:" + ExceptionUtils.getStackTrace(e));
+        msg.addMessageHeader(MetadataConstants.RMQ_PUBLISH_STATUS, "failed, message:" + ExceptionUtils.getStackTrace(e));
       }
 
     };
-
 
     abstract void handleSuccess(AdaptrisMessage msg);
 
@@ -105,8 +103,7 @@ public class PublishToDefaultExchange extends ServiceImp implements ConnectedSer
   /**
    * How to build the required {@code BasicProperties} if required.
    * <p>
-   * The default if not explicitly specified is to return a {@code null} object which uses the
-   * default behaviour of RabbitMQ.
+   * The default if not explicitly specified is to return a {@code null} object which uses the default behaviour of RabbitMQ.
    * </p>
    */
   @Getter
@@ -116,15 +113,13 @@ public class PublishToDefaultExchange extends ServiceImp implements ConnectedSer
   @AdvancedConfig(rare = true)
   private BasicPropertiesBuilder propertyBuilder;
 
-
   /**
    * What to do after publishing the message depending on whether that was successful or not.
    * <p>
    * <ul>
    * <li>TRADITIONAL : act like a traditional service and throw an exception if publishing was not successful</li>
-   * <li>NO_EXCEPTION: Never throw an exception, add metadata against the key
-   * {@value MetadataConstants#RMQ_PUBLISH_STATUS} indicating success or failure. Failure will
-   * contain the stacktrace from the exception but no exception will be thrown by the service.</li>
+   * <li>NO_EXCEPTION: Never throw an exception, add metadata against the key {@value MetadataConstants#RMQ_PUBLISH_STATUS} indicating
+   * success or failure. Failure will contain the stacktrace from the exception but no exception will be thrown by the service.</li>
    * </ul>
    * </p>
    */
@@ -136,7 +131,7 @@ public class PublishToDefaultExchange extends ServiceImp implements ConnectedSer
 
   /**
    * The RabbitMQ Connection.
-   * 
+   *
    */
   @Getter
   @Setter
@@ -160,8 +155,7 @@ public class PublishToDefaultExchange extends ServiceImp implements ConnectedSer
   public final void prepare() throws CoreException {
     Args.notNull(getConnection(), "connection");
     Args.notBlank(getQueue(), "queue");
-    wrappedProducer = new StandardMessageProducer().withPropertyBuilder(getPropertyBuilder())
-        .withQueue(getQueue());
+    wrappedProducer = new StandardMessageProducer().withPropertyBuilder(getPropertyBuilder()).withQueue(getQueue());
     LifecycleHelper.prepare(wrappedProducer);
     LifecycleHelper.prepare(getConnection());
   }
@@ -202,4 +196,5 @@ public class PublishToDefaultExchange extends ServiceImp implements ConnectedSer
     setQueue(q);
     return this;
   }
+
 }

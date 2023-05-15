@@ -1,12 +1,12 @@
 package com.adaptris.core.amqp.qpid;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.adaptris.core.jms.JmsConnection;
 import com.adaptris.core.jms.activemq.BasicActiveMqImplementation;
@@ -14,7 +14,7 @@ import com.adaptris.interlok.junit.scaffolding.BaseCase;
 import com.adaptris.util.TimeInterval;
 
 public class BasicQpidImplementationTest extends BaseCase {
-  
+
   @Test
   public void testConnectionFactory() throws Exception {
     EmbeddedAMQP broker = new EmbeddedAMQP();
@@ -24,15 +24,14 @@ public class BasicQpidImplementationTest extends BaseCase {
       connection.prepare();
       connection.init();
       connection.start();
-//      start(connection);
+      // start(connection);
       assertNotNull(connection.currentConnection());
       assertTrue(connection.currentConnection() instanceof javax.jms.Connection);
       assertNotNull(connection.currentConnection().getMetaData());
-      
+
     } catch (Exception ex) {
-      
-    }
-    finally {
+
+    } finally {
       stop(connection);
       broker.destroy();
     }

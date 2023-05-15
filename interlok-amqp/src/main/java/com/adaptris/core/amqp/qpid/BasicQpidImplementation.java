@@ -39,8 +39,7 @@ public class BasicQpidImplementation extends UrlVendorImplementation {
     ConnectionFactory cf;
     try {
       cf = new ActiveMQConnectionFactory(getBrokerUrl());
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new JMSException(e.getMessage());
     }
     return cf;
@@ -53,6 +52,7 @@ public class BasicQpidImplementation extends UrlVendorImplementation {
 
   @Override
   public boolean connectionEquals(VendorImplementationBase vendorImp) {
-    return (vendorImp instanceof BasicQpidImplementation) && super.connectionEquals(vendorImp);
+    return vendorImp instanceof BasicQpidImplementation && super.connectionEquals(vendorImp);
   }
+
 }

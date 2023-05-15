@@ -1,9 +1,12 @@
 package interlok.rabbitmq;
 
 import java.nio.charset.StandardCharsets;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+
 import org.apache.commons.lang3.ObjectUtils;
+
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
@@ -19,6 +22,7 @@ import com.adaptris.interlok.util.Args;
 import com.adaptris.interlok.util.Closer;
 import com.rabbitmq.client.Channel;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import interlok.rabbitmq.Declaration.ExchangeDeclaration;
 import interlok.rabbitmq.Declaration.QueueDeclaration;
 import interlok.rabbitmq.Translator.BasicPropertiesBuilder;
@@ -29,33 +33,30 @@ import lombok.Setter;
 /**
  * Publishes a message to RabbitMQ.
  * <p>
- * RabbitMQ requires you to programatically declare both the exchange and queue before use. If you
- * are not targetting the <strong>default exchange</strong> or have specific requirements about the
- * queue declaration then please remember to configure a {@link ExchangeDeclaration} and
- * {@link QueueDeclaration} respectively. By default we simply use the default exchange and the
- * queue is declared to be durable, non-exclusive, with no auto-delete and no additional arguments.
+ * RabbitMQ requires you to programatically declare both the exchange and queue before use. If you are not targetting the <strong>default
+ * exchange</strong> or have specific requirements about the queue declaration then please remember to configure a
+ * {@link ExchangeDeclaration} and {@link QueueDeclaration} respectively. By default we simply use the default exchange and the queue is
+ * declared to be durable, non-exclusive, with no auto-delete and no additional arguments.
  * </p>
  * <p>
- * Use a property-builder to configure how the {@code BasicProperties} object is created. Unless
- * explicitly configured there will be no additional properties in the call to
- * {@code Channel#basicPublish}.
+ * Use a property-builder to configure how the {@code BasicProperties} object is created. Unless explicitly configured there will be no
+ * additional properties in the call to {@code Channel#basicPublish}.
  * </p>
  */
 @XStreamAlias("rabbitmq-message-producer")
 @NoArgsConstructor
-@ComponentProfile(summary = "Publishes a message to RabbitMQ", tag = "amqp, rabbitmq",
-    recommended = {RabbitMqConnection.class}, since = "4.3.0")
-@DisplayOrder(order = {"queue", "propertyBuilder", "queueDeclaration", "exchangeDeclaration"})
+@ComponentProfile(summary = "Publishes a message to RabbitMQ", tag = "amqp, rabbitmq", recommended = {
+    RabbitMqConnection.class }, since = "4.3.0")
+@DisplayOrder(order = { "queue", "propertyBuilder", "queueDeclaration", "exchangeDeclaration" })
 public class StandardMessageProducer extends ProduceOnlyProducerImp {
 
-  private static ExchangeDeclaration DEFAULT_EXCHANGE = (channel) -> {};
-  private static QueueDeclaration DEFAULT_QUEUE =
-      (ch, name) -> ch.queueDeclare(name, true, false, false, null);
-
+  private static ExchangeDeclaration DEFAULT_EXCHANGE = (channel) -> {
+  };
+  private static QueueDeclaration DEFAULT_QUEUE = (ch, name) -> ch.queueDeclare(name, true, false, false, null);
 
   /**
    * The queue to publish to.
-   * 
+   *
    */
   @InputFieldHint(expression = true)
   @NotBlank(message = "Queue may not be blank")
@@ -66,8 +67,7 @@ public class StandardMessageProducer extends ProduceOnlyProducerImp {
   /**
    * How to build the required {@code BasicProperties} if required.
    * <p>
-   * The default if not explicitly specified is to return a {@code null} object which uses the
-   * default behaviour of RabbitMQ
+   * The default if not explicitly specified is to return a {@code null} object which uses the default behaviour of RabbitMQ
    * </p>
    */
   @Getter
@@ -78,7 +78,7 @@ public class StandardMessageProducer extends ProduceOnlyProducerImp {
 
   /**
    * How the Exchange will be declared prior to use.
-   * 
+   *
    */
   @Getter
   @Setter
@@ -89,7 +89,7 @@ public class StandardMessageProducer extends ProduceOnlyProducerImp {
 
   /**
    * How the Queue will be declared prior to use.
-   * 
+   *
    */
   @Getter
   @Setter
@@ -110,8 +110,7 @@ public class StandardMessageProducer extends ProduceOnlyProducerImp {
   @Override
   public void start() throws CoreException {
     try {
-      rabbitChannel =
-          retrieveConnection(ConnectionWrapper.class).wrappedConnection().createChannel();
+      rabbitChannel = retrieveConnection(ConnectionWrapper.class).wrappedConnection().createChannel();
       exchangeDeclaration().declare(rabbitChannel);
       // If the queue isn't an expression we can declare it now and keep a flag as to
       // whether we want to re-declare. QueueDeclaration shouldn't be an expensive
@@ -125,7 +124,6 @@ public class StandardMessageProducer extends ProduceOnlyProducerImp {
     }
   }
 
-
   @Override
   public void stop() {
     Closer.closeQuietly(rabbitChannel);
@@ -137,8 +135,8 @@ public class StandardMessageProducer extends ProduceOnlyProducerImp {
       if (queueExpression) {
         queueDeclaration().declare(rabbitChannel, endpoint);
       }
-      rabbitChannel.basicPublish(exchangeDeclaration().name(), endpoint,
-          propertyBuilder().build(msg), msg.getContent().getBytes(StandardCharsets.UTF_8));
+      rabbitChannel.basicPublish(exchangeDeclaration().name(), endpoint, propertyBuilder().build(msg),
+          msg.getContent().getBytes(StandardCharsets.UTF_8));
     } catch (Exception e) {
       throw ExceptionHelper.wrapProduceException(e);
     }
@@ -167,8 +165,8 @@ public class StandardMessageProducer extends ProduceOnlyProducerImp {
     return ObjectUtils.defaultIfNull(getExchangeDeclaration(), DEFAULT_EXCHANGE);
   }
 
-
   private QueueDeclaration queueDeclaration() {
     return ObjectUtils.defaultIfNull(getQueueDeclaration(), DEFAULT_QUEUE);
   }
+
 }

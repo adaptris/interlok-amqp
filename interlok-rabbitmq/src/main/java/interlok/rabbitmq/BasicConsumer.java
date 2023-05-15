@@ -2,9 +2,12 @@ package interlok.rabbitmq;
 
 import static interlok.rabbitmq.MetadataConstants.RMQ_CONSUMER_TAG;
 import static interlok.rabbitmq.MetadataConstants.RMQ_QUEUE;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+
 import org.apache.commons.lang3.ObjectUtils;
+
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.DisplayOrder;
@@ -20,6 +23,7 @@ import com.rabbitmq.client.CancelCallback;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DeliverCallback;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import interlok.rabbitmq.Translator.BasicPropertiesBuilder;
 import interlok.rabbitmq.Translator.BasicPropertiesHandler;
 import interlok.rabbitmq.Translator.EnvelopeHandler;
@@ -33,21 +37,20 @@ import lombok.Setter;
  * This is the simplest way to consume a message from RabbitMQ.
  * </p>
  * <p>
- * Any {@code BasicProperties} will be copied as metadata based on the
- * {@link BasicPropertiesBuilder} implementation specified. The default is always to ignore incoming
- * properties.
+ * Any {@code BasicProperties} will be copied as metadata based on the {@link BasicPropertiesBuilder} implementation specified. The default
+ * is always to ignore incoming properties.
  * </p>
  */
 @XStreamAlias("rabbitmq-basic-consumer")
-@ComponentProfile(summary = "Basic consumer for RabbitMQ", recommended = {RabbitMqConnection.class},
-    tag = "amqp, rabbitmq", since = "4.3.0")
+@ComponentProfile(summary = "Basic consumer for RabbitMQ", recommended = {
+    RabbitMqConnection.class }, tag = "amqp, rabbitmq", since = "4.3.0")
 @NoArgsConstructor
-@DisplayOrder(order = {"queue"})
+@DisplayOrder(order = { "queue" })
 public class BasicConsumer extends AdaptrisMessageConsumerImp {
 
   /**
    * The queue to consume from.
-   * 
+   *
    */
   @NotBlank(message = "Queue may not be blank")
   @Getter
@@ -57,8 +60,7 @@ public class BasicConsumer extends AdaptrisMessageConsumerImp {
   /**
    * How to handle the {@code Delivery#getEnvelope()}.
    * <p>
-   * If not explicitly configured, then the envelope associated with the incoming message is
-   * ignored.
+   * If not explicitly configured, then the envelope associated with the incoming message is ignored.
    * </p>
    */
   @Getter
@@ -70,8 +72,7 @@ public class BasicConsumer extends AdaptrisMessageConsumerImp {
   /**
    * How to handle the {@code Delivery#getProperties()}.
    * <p>
-   * If not explicitly configured, then any properties associated with the incoming message are
-   * ignored
+   * If not explicitly configured, then any properties associated with the incoming message are ignored
    * </p>
    */
   @Getter
@@ -91,14 +92,12 @@ public class BasicConsumer extends AdaptrisMessageConsumerImp {
   @Override
   public void start() throws CoreException {
     try {
-      rabbitChannel =
-          retrieveConnection(ConnectionWrapper.class).wrappedConnection().createChannel();
+      rabbitChannel = retrieveConnection(ConnectionWrapper.class).wrappedConnection().createChannel();
 
       rabbitChannel.queueDeclare(getQueue(), true, false, false, null);
       DeliverCallback onMessage = (consumerTag, delivery) -> {
         String oldName = renameThread();
-        AdaptrisMessage am =
-            Translator.build(delivery, propertiesHandler(), envelopeHandler(), getMessageFactory());
+        AdaptrisMessage am = Translator.build(delivery, propertiesHandler(), envelopeHandler(), getMessageFactory());
         am.addMetadata(RMQ_CONSUMER_TAG, consumerTag);
         am.addMetadata(RMQ_QUEUE, getQueue());
         retrieveAdaptrisMessageListener().onAdaptrisMessage(am);
@@ -127,7 +126,6 @@ public class BasicConsumer extends AdaptrisMessageConsumerImp {
     return MetadataConstants.RMQ_QUEUE;
   }
 
-
   @Override
   protected String newThreadName() {
     return DestinationHelper.threadName(retrieveAdaptrisMessageListener());
@@ -147,10 +145,8 @@ public class BasicConsumer extends AdaptrisMessageConsumerImp {
     return this;
   }
 
-
   private BasicPropertiesHandler propertiesHandler() {
     return ObjectUtils.defaultIfNull(getPropertiesHandler(), Translator.IGNORE_PROPERTIES);
   }
-
 
 }
