@@ -8,6 +8,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.TopologyRecoveryException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import lombok.NoArgsConstructor;
 
 /**
@@ -15,11 +16,10 @@ import lombok.NoArgsConstructor;
  */
 @XStreamAlias("rabbitmq-on-error-restart")
 @AdapterComponent
-@ComponentProfile(summary = "When RabbitMQ reports an exception, always restart",
-    recommended = {RabbitMqConnection.class}, since = "4.3.0")
+@ComponentProfile(summary = "When RabbitMQ reports an exception, always restart", recommended = {
+    RabbitMqConnection.class }, since = "4.3.0")
 @NoArgsConstructor
 public class AlwaysRestartExceptionHandler extends ExceptionHandlerImpl {
-
 
   @Override
   public void handleUnexpectedConnectionDriverException(Connection c, Throwable e) {
@@ -43,8 +43,7 @@ public class AlwaysRestartExceptionHandler extends ExceptionHandlerImpl {
 
   // This is never going to fire because our parent service never adds a consumer.
   @Override
-  public void handleConsumerException(Channel c, Throwable e, Consumer consumer, String consumerTag,
-      String methodName) {
+  public void handleConsumerException(Channel c, Throwable e, Consumer consumer, String consumerTag, String methodName) {
     logAndRestart(e, "ConsumerException");
   }
 
@@ -59,8 +58,7 @@ public class AlwaysRestartExceptionHandler extends ExceptionHandlerImpl {
   }
 
   @Override
-  public void handleTopologyRecoveryException(Connection c, Channel ch,
-      TopologyRecoveryException e) {
+  public void handleTopologyRecoveryException(Connection c, Channel ch, TopologyRecoveryException e) {
     logAndRestart(e, "TopologyRecoveryException");
   }
 
@@ -68,6 +66,5 @@ public class AlwaysRestartExceptionHandler extends ExceptionHandlerImpl {
     log.warn("Restarting because of {} Reason: [{}]", logMessage, exception.getMessage());
     super.restartAffectedComponents();
   }
-
 
 }

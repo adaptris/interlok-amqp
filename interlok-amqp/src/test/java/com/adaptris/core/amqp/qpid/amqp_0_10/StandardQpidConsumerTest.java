@@ -20,12 +20,12 @@ public class StandardQpidConsumerTest extends JmsConsumerCase {
     return result;
   }
 
-  protected JmsConnection configure(JmsConnection c) {
-    c.setUserName("BrokerUsername");
-    c.setPassword("BrokerPassword");
-    c.setVendorImplementation(createVendorImpl());
-    c.setConnectionErrorHandler(new JmsConnectionErrorHandler());
-    return c;
+  protected JmsConnection configure(JmsConnection con) {
+    con.setUserName("BrokerUsername");
+    con.setPassword("BrokerPassword");
+    con.setVendorImplementation(createVendorImpl());
+    con.setConnectionErrorHandler(new JmsConnectionErrorHandler());
+    return con;
   }
 
   protected StandardQpidImplementation createVendorImpl() {

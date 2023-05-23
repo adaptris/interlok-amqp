@@ -1,14 +1,15 @@
 package com.adaptris.core.amqp.qpid;
 
 import static com.adaptris.interlok.junit.scaffolding.util.PortManager.release;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import com.adaptris.interlok.junit.scaffolding.util.PortManager;
 import com.adaptris.util.SafeGuidGenerator;
 
@@ -16,14 +17,13 @@ public class EmbeddedAMQP {
 
   private static final String AMQP_URL_PREFIX = "amqp://0.0.0.0:";
   private static final String OPENWIRE_URL_PREFIX = "tcp://localhost:";
-  private static Logger log = LoggerFactory.getLogger(EmbeddedAMQP.class);
   private BrokerService broker = null;
   private String brokerName;
   private File brokerDataDir;
   private Integer amqpPort;
   private Integer openwirePort;
   private String amqpConnectorURI;
-  private String openwireConnectorURI;;
+  private String openwireConnectorURI;
   private static SafeGuidGenerator nameGenerator = new SafeGuidGenerator();
 
   public EmbeddedAMQP() throws Exception {
@@ -74,21 +74,16 @@ public class EmbeddedAMQP {
   }
 
   public void destroy() throws Exception {
-    new Thread(new Runnable() {
-      
-      @Override
-      public void run() {
-        try {
-          stop();
-          release(amqpPort);
-          release(openwirePort);
-        }
-        catch (Exception e) {
+    new Thread(() -> {
+      try {
+        stop();
+        release(amqpPort);
+        release(openwirePort);
+      } catch (Exception e) {
 
-        }
       }
     }).start();
-    ;
+
   }
 
   public void stop() throws Exception {

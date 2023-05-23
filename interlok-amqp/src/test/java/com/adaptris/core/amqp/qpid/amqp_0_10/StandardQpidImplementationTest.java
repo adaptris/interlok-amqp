@@ -1,28 +1,25 @@
 package com.adaptris.core.amqp.qpid.amqp_0_10;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import javax.jms.JMSException;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.adaptris.core.amqp.qpid.BasicQpidImplementationTest;
+
+import org.junit.jupiter.api.Test;
+
 import com.adaptris.core.jms.activemq.BasicActiveMqImplementation;
 import com.adaptris.interlok.junit.scaffolding.BaseCase;
 
 public class StandardQpidImplementationTest extends BaseCase {
-
-  private static Logger log = LoggerFactory.getLogger(BasicQpidImplementationTest.class);
 
   @Test
   public void testConnectionFactory() throws Exception {
     try {
       StandardQpidImplementation vendor = createVendorImpl();
       assertNotNull(vendor.createConnectionFactory());
-    }
-    finally {
+    } finally {
     }
   }
 
@@ -32,11 +29,9 @@ public class StandardQpidImplementationTest extends BaseCase {
       StandardQpidImplementation vendor = new StandardQpidImplementation();
       vendor.createConnectionFactory();
       fail();
-    }
-    catch (JMSException expected) {
+    } catch (JMSException expected) {
 
-    }
-    finally {
+    } finally {
     }
   }
 

@@ -3,8 +3,8 @@ package com.adaptris.core.amqp.rabbitmq;
 import com.adaptris.core.StandaloneConsumer;
 import com.adaptris.core.jms.JmsConnection;
 import com.adaptris.core.jms.JmsConnectionErrorHandler;
-import com.adaptris.interlok.junit.scaffolding.jms.JmsConsumerCase;
 import com.adaptris.core.jms.PtpConsumer;
+import com.adaptris.interlok.junit.scaffolding.jms.JmsConsumerCase;
 
 public class BasicRabbitMqConsumerTest extends JmsConsumerCase {
 
@@ -20,12 +20,12 @@ public class BasicRabbitMqConsumerTest extends JmsConsumerCase {
     return result;
   }
 
-  protected JmsConnection configure(JmsConnection c) {
-    c.setUserName("BrokerUsername");
-    c.setPassword("BrokerPassword");
-    c.setVendorImplementation(createVendorImpl());
-    c.setConnectionErrorHandler(new JmsConnectionErrorHandler());
-    return c;
+  protected JmsConnection configure(JmsConnection con) {
+    con.setUserName("BrokerUsername");
+    con.setPassword("BrokerPassword");
+    con.setVendorImplementation(createVendorImpl());
+    con.setConnectionErrorHandler(new JmsConnectionErrorHandler());
+    return con;
   }
 
   protected BasicRabbitMqJmsImplementation createVendorImpl() {
@@ -33,4 +33,5 @@ public class BasicRabbitMqConsumerTest extends JmsConsumerCase {
     mq.setBrokerUrl("amqp://localhost:5672/vhost");
     return mq;
   }
+
 }
