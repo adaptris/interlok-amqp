@@ -169,6 +169,8 @@ subprojects {
     api ("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
     implementation ("org.slf4j:slf4j-api:$slf4jVersion")
     implementation ("org.slf4j:jcl-over-slf4j:$slf4jVersion")
+    
+    api ("javax.jms:javax.jms-api:2.0.1")
 
     annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
     testImplementation ('junit:junit:4.13.2')
