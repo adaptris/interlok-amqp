@@ -16,14 +16,16 @@ import static interlok.rabbitmq.MetadataConstants.RMQ_TYPE;
 import static interlok.rabbitmq.MetadataConstants.RMQ_USER_ID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.junit.jupiter.api.Test;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.rabbitmq.client.AMQP.BasicProperties;
-import interlok.rabbitmq.PropertiesToMetadata;
 
 public class PropertiesToMetadataTest {
 
@@ -34,8 +36,7 @@ public class PropertiesToMetadataTest {
       RMQ_EXPIRATION, RMQ_MESSAGE_ID, RMQ_PRIORITY, RMQ_REPLY_TO,
       RMQ_TIMESTAMP, RMQ_TYPE, RMQ_USER_ID
   };
-  
-  
+
   @Test
   public void testPropertiesToMetadata_Null() throws Exception {
 
@@ -43,11 +44,11 @@ public class PropertiesToMetadataTest {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage();
     props.handle(null, msg);
     for (String s : ALL_BASIC_PROPERTIES) {
-      assertFalse(msg.headersContainsKey(s));      
+      assertFalse(msg.headersContainsKey(s));
     }
     assertFalse(msg.headersContainsKey(RMQ_CLASS_ID));
   }
-  
+
   @Test
   public void testPropertiesToMetadata_EmptyProperties() throws Exception {
 
@@ -57,40 +58,27 @@ public class PropertiesToMetadataTest {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage();
     props.handle(empty, msg);
     for (String s : ALL_BASIC_PROPERTIES) {
-      assertFalse(msg.headersContainsKey(s));      
+      assertFalse(msg.headersContainsKey(s));
     }
     assertTrue(msg.headersContainsKey(RMQ_CLASS_ID));
   }
 
-  
   @Test
   public void testPropertiesToMetadata() throws Exception {
 
     PropertiesToMetadata props = new PropertiesToMetadata();
     Map<String, Object> headers = new HashMap<>();
     headers.put("MyHeader", "MyHeaderValue");
-    BasicProperties full = new BasicProperties.Builder()
-        .appId("MyAppId")
-        .clusterId("MyClusterId")
-        .contentEncoding("base64")
-        .contentType("text/plain")
-        .correlationId("MyCorrelationId")
-        .deliveryMode(5)
-        .expiration("MyExpiration")
-        .messageId("MyMessageId")
-        .priority(9)
-        .replyTo("MyReplyTo")
-        .timestamp(new Date())
-        .type("MyType")
-        .userId("MyUserId")
-        .headers(headers)
-        .build();
+    BasicProperties full = new BasicProperties.Builder().appId("MyAppId").clusterId("MyClusterId").contentEncoding("base64")
+        .contentType("text/plain").correlationId("MyCorrelationId").deliveryMode(5).expiration("MyExpiration").messageId("MyMessageId")
+        .priority(9).replyTo("MyReplyTo").timestamp(new Date()).type("MyType").userId("MyUserId").headers(headers).build();
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage();
     props.handle(full, msg);
     for (String s : ALL_BASIC_PROPERTIES) {
-      assertTrue(msg.headersContainsKey(s));      
+      assertTrue(msg.headersContainsKey(s));
     }
     assertTrue(msg.headersContainsKey(RMQ_CLASS_ID));
     assertTrue(msg.headersContainsKey("MyHeader"));
   }
+
 }

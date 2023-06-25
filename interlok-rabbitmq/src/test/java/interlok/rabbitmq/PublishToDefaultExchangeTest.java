@@ -5,12 +5,15 @@ import static interlok.rabbitmq.JunitConfig.NAME_GENERATOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.DefaultMessageFactory;
 import com.adaptris.core.ServiceException;
 import com.adaptris.core.util.LifecycleHelper;
 import com.adaptris.interlok.junit.scaffolding.services.ExampleServiceCase;
+
 import interlok.rabbitmq.PublishToDefaultExchange.Behaviour;
 
 public class PublishToDefaultExchangeTest extends ExampleServiceCase {
@@ -20,12 +23,11 @@ public class PublishToDefaultExchangeTest extends ExampleServiceCase {
     JunitConfig.abortIfNotEnabled();
     String brokerUrl = JunitConfig.brokerURL();
     String queueName = NAME_GENERATOR.safeUUID();
-    
-    RabbitMqConnection c = new RabbitMqConnection().withFactoryBuilder(
-        new SimpleConnectionFactoryBuilder().withBrokerUrl(brokerUrl));
+
+    RabbitMqConnection c = new RabbitMqConnection().withFactoryBuilder(new SimpleConnectionFactoryBuilder().withBrokerUrl(brokerUrl));
 
     PublishToDefaultExchange service = new PublishToDefaultExchange().withQueue(queueName).withConnection(c);
-    
+
     try (BlancDeBouscat reader = new BlancDeBouscat(brokerUrl, queueName)) {
       LifecycleHelper.initAndStart(service);
       AdaptrisMessage msg = new DefaultMessageFactory().newMessage(MESSAGE_BODY);
@@ -43,7 +45,7 @@ public class PublishToDefaultExchangeTest extends ExampleServiceCase {
     behaviour.handleSuccess(msg);
     assertThrows(ServiceException.class, () -> {
       behaviour.handleFailure(msg, new Exception("myException"));
-    });      
+    });
   }
 
   @Test
@@ -56,12 +58,10 @@ public class PublishToDefaultExchangeTest extends ExampleServiceCase {
     assertTrue(msg.getMetadataValue(MetadataConstants.RMQ_PUBLISH_STATUS).contains("myException"));
   }
 
-  
   @Override
   protected PublishToDefaultExchange retrieveObjectForSampleConfig() {
-    RabbitMqConnection c =
-        new RabbitMqConnection().withFactoryBuilder(new SimpleConnectionFactoryBuilder()
-            .withBrokerUrl("amqp://admin:admin@localhost:5672/vhost"));
+    RabbitMqConnection c = new RabbitMqConnection()
+        .withFactoryBuilder(new SimpleConnectionFactoryBuilder().withBrokerUrl("amqp://admin:admin@localhost:5672/vhost"));
     return new PublishToDefaultExchange().withQueue("MyQueue").withConnection(c);
   }
 

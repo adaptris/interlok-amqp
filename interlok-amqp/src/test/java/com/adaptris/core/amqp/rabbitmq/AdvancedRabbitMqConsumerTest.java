@@ -7,7 +7,6 @@ import com.adaptris.util.KeyValuePair;
 
 public class AdvancedRabbitMqConsumerTest extends BasicRabbitMqConsumerTest {
 
-
   @Override
   protected String createBaseFileName(Object object) {
     return ((StandaloneConsumer) object).getConsumer().getClass().getName() + "-RabbitMQ-ADVANCED";
@@ -27,4 +26,5 @@ public class AdvancedRabbitMqConsumerTest extends BasicRabbitMqConsumerTest {
     mq.getConnectionFactoryProperties().add(new KeyValuePair("OnMessageTimeoutMs", "10000"));
     return mq;
   }
+
 }

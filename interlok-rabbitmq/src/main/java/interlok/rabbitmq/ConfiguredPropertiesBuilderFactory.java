@@ -13,14 +13,17 @@ import static interlok.rabbitmq.MetadataConstants.RMQ_REPLY_TO;
 import static interlok.rabbitmq.MetadataConstants.RMQ_TIMESTAMP;
 import static interlok.rabbitmq.MetadataConstants.RMQ_TYPE;
 import static interlok.rabbitmq.MetadataConstants.RMQ_USER_ID;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.InputFieldHint;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.util.text.DateFormatUtil;
 import com.rabbitmq.client.AMQP.BasicProperties.Builder;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import interlok.rabbitmq.Translator.PropertiesBuilderFactory;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,11 +32,11 @@ import lombok.Setter;
 /**
  * Implementation that allows you to explicit configure values in config.
  * <p>
- * Expressions are supported but no checking of values is done. If you leave something unconfigured
- * (i.e. 'null' then the corresponding value will never be set
+ * Expressions are supported but no checking of values is done. If you leave something unconfigured (i.e. 'null' then the corresponding
+ * value will never be set
  * </p>
  * </p>
- * 
+ *
  */
 @XStreamAlias("rabbitmq-configured-properties-builder")
 @NoArgsConstructor
@@ -119,8 +122,8 @@ public class ConfiguredPropertiesBuilderFactory implements PropertiesBuilderFact
   /**
    * Maps onto {@code com.rabbitmq.client.AMQP.BasicProperties#getTimestamp()}
    * <p>
-   * Note that this should be an Date; it is defined as a String here for expression purposes.
-   * Ultimately we use {@link DateFormatUtil#parse(String)} to build a Date object.
+   * Note that this should be an Date; it is defined as a String here for expression purposes. Ultimately we use
+   * {@link DateFormatUtil#parse(String)} to build a Date object.
    * </p>
    */
   @Getter
@@ -142,7 +145,6 @@ public class ConfiguredPropertiesBuilderFactory implements PropertiesBuilderFact
   @InputFieldHint(expression = true)
   private String userId;
 
-
   @Override
   public Builder build(AdaptrisMessage msg) {
     Map<String, String> m = new HashMap<>();
@@ -161,7 +163,5 @@ public class ConfiguredPropertiesBuilderFactory implements PropertiesBuilderFact
     m.put(RMQ_USER_ID, msg.resolve(getUserId()));
     return build(m);
   }
-
-
 
 }
