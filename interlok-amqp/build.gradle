@@ -10,17 +10,14 @@ ext {
 }
 
 dependencies {
- // api ("org.apache.qpid:qpid-jms-client:1.6.0"){
-  api ("org.apache.qpid:qpid-jms-client:2.2.0"){
+  api ("org.apache.qpid:qpid-jms-client:1.10.0"){
     // 4.1.43.Final has a HTTP request smuggler vuln, so
     // we exclude netty, and force the fixed version
     // dependabot will sort us out...
     exclude group: "io.netty"
   }
   api ("org.apache.qpid:qpid-java-build:6.1.7")
-//  api ("org.apache.qpid:qpid-amqp-1-0-client-jms:0.32")
   api ("org.apache.qpid:qpid-client:6.4.0")
-//  api ("org.apache.qpid:proton-jms:0.12.2")
   api ("org.apache.qpid:proton-j:0.34.1")
   api ("com.rabbitmq.jms:rabbitmq-jms:2.4.0")
   api ("com.rabbitmq:amqp-client:5.18.0")
