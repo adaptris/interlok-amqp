@@ -8,7 +8,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/adaptris/interlok-amqp/badge.svg?targetFile=build.gradle)](https://snyk.io/test/github/adaptris/interlok-amqp?targetFile=build.gradle)
 [![Closed PRs](https://img.shields.io/github/issues-pr-closed/adaptris/interlok-amqp)](https://github.com/adaptris/interlok-amqp/pulls?q=is%3Apr+is%3Aclosed)
 
-Interlok with AMQP 1.0/0.9 + RabbitMQ
+Interlok with AMQP 1.0 + Apache Artemis
 
 !Note that error messages can be quite confusing.
 
