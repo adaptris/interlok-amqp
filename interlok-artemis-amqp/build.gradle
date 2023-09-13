@@ -2,7 +2,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 import org.apache.tools.ant.filters.*
 
 ext {
-  componentName='Interlok Messaging/AMQP'
+  componentName='Interlok Messaging/Artemis AMQP'
   componentDesc='Treating a AMQP 0.9.0/1.0 Provider as a JMS via Apache QPID'
   delombokTargetDir = new File("${project.projectDir}/src/main/generated")
   activeMqVersion= '5.17.2'
@@ -10,13 +10,9 @@ ext {
 }
 
 dependencies {
-   
-  
   implementation ("org.apache.activemq:artemis-jms-client:2.30.0")
   implementation ("org.apache.qpid:qpid-jms-client:1.10.0")
-
 }
-
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
   classifier = 'javadoc'
@@ -81,7 +77,6 @@ publishing {
     }
   }
 }
-
 
 delombok {
   target = delombokTargetDir
