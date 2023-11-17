@@ -15,8 +15,11 @@ import static interlok.rabbitmq.MetadataConstants.RMQ_TYPE;
 import static interlok.rabbitmq.MetadataConstants.RMQ_USER_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
 import java.util.Date;
+
 import org.junit.jupiter.api.Test;
+
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.AdaptrisMessageFactory;
 import com.adaptris.util.text.DateFormatUtil;
@@ -82,7 +85,6 @@ public class PropertiesBuilderFactoryTest {
     assertNull(props.getContentType());
   }
 
-
   @Test
   public void testConfiguredPropertiesBuilder() throws Exception {
     AdaptrisMessage msg = AdaptrisMessageFactory.getDefaultInstance().newMessage();
@@ -121,6 +123,5 @@ public class PropertiesBuilderFactoryTest {
     assertEquals("myType", props.getType());
     assertEquals("myUserId", props.getUserId());
   }
-
 
 }

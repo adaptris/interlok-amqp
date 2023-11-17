@@ -5,7 +5,9 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Queue;
 import javax.jms.Topic;
+
 import org.apache.commons.lang3.BooleanUtils;
+
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.jms.JmsActorConfig;
@@ -16,12 +18,13 @@ import com.adaptris.core.jms.VendorImplementationBase;
 import com.rabbitmq.jms.admin.RMQConnectionFactory;
 import com.rabbitmq.jms.admin.RMQDestination;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import lombok.Getter;
 import lombok.Setter;
 
 /**
  * AMQP 0.9.1 implementation of {@link VendorImplementation} using RabbitMQ.
- * 
+ *
  * <p>
  * Everything required to configure the connection needs to be specified on the URL. If you configure a username and password on the
  * wrapping {@link JmsConnection} in which case {@link ConnectionFactory#createConnection(String, String)} is used when creating the
@@ -30,7 +33,7 @@ import lombok.Setter;
  * <p>
  * This was built against {@code com.rabbitmq.jms:rabbitmq-jms:1.6.0} and {@code com.rabbitmq:amqp-client:4.0.2}
  * </p>
- * 
+ *
  * @config rabbitmq-basic-jms-implementation
  * @since 3.6.0
  */
@@ -42,16 +45,14 @@ public class BasicRabbitMqJmsImplementation extends UrlVendorImplementation {
   /**
    * Force the underlying JMS destination to be interopable with AMQP.
    * <p>
-   * Setting this to true changes queue and topic creation to use the
-   * {@code RMQDestination(String,String,String,String)} constructor. rather than delegating it to the
-   * underlying session. This allows interopability with AMQP senders such as
+   * Setting this to true changes queue and topic creation to use the {@code RMQDestination(String,String,String,String)} constructor.
+   * rather than delegating it to the underlying session. This allows interopability with AMQP senders such as
    * <a href="https://github.com/ruby-amqp/bunny">bunny</a> + JMS Producer/Consumers.
    * </p>
    * <p>
-   * Note the setting this to be true will still (under the covers) first use the JMS session to
-   * create a standard queue or topic (this has the effect of auto-declaring the required information
-   * within RabbitMQ first. After that it simply returns a {@code RMQDestination} with the specified
-   * name.
+   * Note the setting this to be true will still (under the covers) first use the JMS session to create a standard queue or topic (this has
+   * the effect of auto-declaring the required information within RabbitMQ first. After that it simply returns a {@code RMQDestination} with
+   * the specified name.
    * <p>
    * The default is false if not specified.
    * </p>
@@ -65,7 +66,7 @@ public class BasicRabbitMqJmsImplementation extends UrlVendorImplementation {
   @Override
   public RMQConnectionFactory createConnectionFactory() throws JMSException {
     RMQConnectionFactory connectionFactory = new RMQConnectionFactory();
-    connectionFactory.setUri(this.getBrokerUrl());
+    connectionFactory.setUri(getBrokerUrl());
     connectionFactory.setOnMessageTimeoutMs(DEFAULT_OM_TIMEOUT);
     return connectionFactory;
   }
@@ -123,4 +124,5 @@ public class BasicRabbitMqJmsImplementation extends UrlVendorImplementation {
   protected interface RMQDestinationBuilder {
     RMQDestination build(String name) throws JMSException;
   }
+
 }

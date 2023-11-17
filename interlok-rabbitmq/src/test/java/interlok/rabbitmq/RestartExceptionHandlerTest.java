@@ -1,13 +1,16 @@
 package interlok.rabbitmq;
 
-import static org.junit.Assert.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+
 import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.TimeoutException;
+
 import org.awaitility.Awaitility;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
 import com.adaptris.core.StartedState;
 import com.adaptris.core.stubs.MockChannel;
 import com.adaptris.core.util.LifecycleHelper;
@@ -24,7 +27,7 @@ public class RestartExceptionHandlerTest {
 
     try {
       LifecycleHelper.initAndStart(channel);
-      RabbitMqConnection conn =  (RabbitMqConnection)channel.getProduceConnection();
+      RabbitMqConnection conn = (RabbitMqConnection) channel.getProduceConnection();
       Connection origCon = conn.wrappedConnection();
       assertNotNull(origCon);
       waitForRecovery(channel, () -> excHandler.handleConnectionException());
@@ -42,11 +45,10 @@ public class RestartExceptionHandlerTest {
 
     try {
       LifecycleHelper.initAndStart(channel);
-      RabbitMqConnection conn =  (RabbitMqConnection)channel.getProduceConnection();
+      RabbitMqConnection conn = (RabbitMqConnection) channel.getProduceConnection();
       Connection origCon = conn.wrappedConnection();
       assertNotNull(origCon);
-      waitForRecovery(channel,
-          () -> excHandler.handleUnexpectedConnectionDriverException(null, new Exception()));
+      waitForRecovery(channel, () -> excHandler.handleUnexpectedConnectionDriverException(null, new Exception()));
       assertNotNull(conn.wrappedConnection());
       assertNotSame(origCon, conn.wrappedConnection());
 
@@ -61,11 +63,10 @@ public class RestartExceptionHandlerTest {
     MockChannel channel = createChannelForRecovery(excHandler);
     try {
       LifecycleHelper.initAndStart(channel);
-      RabbitMqConnection conn =  (RabbitMqConnection)channel.getProduceConnection();
+      RabbitMqConnection conn = (RabbitMqConnection) channel.getProduceConnection();
       Connection origCon = conn.wrappedConnection();
       assertNotNull(origCon);
-      waitForRecovery(channel,
-          () -> excHandler.handleBlockedListenerException(null, new Exception()));
+      waitForRecovery(channel, () -> excHandler.handleBlockedListenerException(null, new Exception()));
       assertNotNull(conn.wrappedConnection());
       assertNotSame(origCon, conn.wrappedConnection());
     } finally {
@@ -73,8 +74,6 @@ public class RestartExceptionHandlerTest {
     }
 
   }
-
-
 
   @Test
   public void testConnectionRecoveryException() throws Exception {
@@ -83,18 +82,16 @@ public class RestartExceptionHandlerTest {
 
     try {
       LifecycleHelper.initAndStart(channel);
-      RabbitMqConnection conn =  (RabbitMqConnection)channel.getProduceConnection();
+      RabbitMqConnection conn = (RabbitMqConnection) channel.getProduceConnection();
       Connection origCon = conn.wrappedConnection();
       assertNotNull(origCon);
-      waitForRecovery(channel,
-          () -> excHandler.handleConnectionRecoveryException(null, new Exception()));
+      waitForRecovery(channel, () -> excHandler.handleConnectionRecoveryException(null, new Exception()));
       assertNotNull(conn.wrappedConnection());
       assertNotSame(origCon, conn.wrappedConnection());
     } finally {
       LifecycleHelper.stopAndClose(channel);
     }
   }
-
 
   @Test
   public void testReturnListenerException() throws Exception {
@@ -103,11 +100,10 @@ public class RestartExceptionHandlerTest {
     MockChannel channel = createChannelForRecovery(excHandler);
     try {
       LifecycleHelper.initAndStart(channel);
-      RabbitMqConnection conn =  (RabbitMqConnection)channel.getProduceConnection();
+      RabbitMqConnection conn = (RabbitMqConnection) channel.getProduceConnection();
       Connection origCon = conn.wrappedConnection();
       assertNotNull(origCon);
-      waitForRecovery(channel,
-          () -> excHandler.handleReturnListenerException(null, new Exception()));
+      waitForRecovery(channel, () -> excHandler.handleReturnListenerException(null, new Exception()));
       assertNotNull(conn.wrappedConnection());
       assertNotSame(origCon, conn.wrappedConnection());
 
@@ -123,12 +119,11 @@ public class RestartExceptionHandlerTest {
     MockChannel channel = createChannelForRecovery(excHandler);
     try {
       LifecycleHelper.initAndStart(channel);
-      RabbitMqConnection conn =  (RabbitMqConnection)channel.getProduceConnection();
+      RabbitMqConnection conn = (RabbitMqConnection) channel.getProduceConnection();
       Connection origCon = conn.wrappedConnection();
       assertNotNull(origCon);
 
-      waitForRecovery(channel,
-          () -> excHandler.handleConfirmListenerException(null, new Exception()));
+      waitForRecovery(channel, () -> excHandler.handleConfirmListenerException(null, new Exception()));
       assertNotNull(conn.wrappedConnection());
       assertNotSame(origCon, conn.wrappedConnection());
     } finally {
@@ -137,19 +132,17 @@ public class RestartExceptionHandlerTest {
 
   }
 
-
   @Test
   public void testConsumerException() throws Exception {
     AlwaysRestartExceptionHandler excHandler = new AlwaysRestartExceptionHandler();
     MockChannel channel = createChannelForRecovery(excHandler);
     try {
       LifecycleHelper.initAndStart(channel);
-      RabbitMqConnection conn =  (RabbitMqConnection)channel.getProduceConnection();
+      RabbitMqConnection conn = (RabbitMqConnection) channel.getProduceConnection();
       Connection origCon = conn.wrappedConnection();
       assertNotNull(origCon);
 
-      waitForRecovery(channel,
-          () -> excHandler.handleConsumerException(null, new Exception(), null, null, null));
+      waitForRecovery(channel, () -> excHandler.handleConsumerException(null, new Exception(), null, null, null));
       assertNotNull(conn.wrappedConnection());
       assertNotSame(origCon, conn.wrappedConnection());
 
@@ -163,15 +156,13 @@ public class RestartExceptionHandlerTest {
     AlwaysRestartExceptionHandler excHandler = new AlwaysRestartExceptionHandler();
     MockChannel channel = createChannelForRecovery(excHandler);
 
-
     try {
       LifecycleHelper.initAndStart(channel);
-      RabbitMqConnection conn =  (RabbitMqConnection)channel.getProduceConnection();
+      RabbitMqConnection conn = (RabbitMqConnection) channel.getProduceConnection();
       Connection origCon = conn.wrappedConnection();
       assertNotNull(origCon);
 
-      waitForRecovery(channel,
-          () -> excHandler.handleChannelRecoveryException(null, new Exception()));
+      waitForRecovery(channel, () -> excHandler.handleChannelRecoveryException(null, new Exception()));
       assertNotNull(conn.wrappedConnection());
       assertNotSame(origCon, conn.wrappedConnection());
     } finally {
@@ -186,12 +177,12 @@ public class RestartExceptionHandlerTest {
 
     try {
       LifecycleHelper.initAndStart(channel);
-      RabbitMqConnection conn =  (RabbitMqConnection)channel.getProduceConnection();
+      RabbitMqConnection conn = (RabbitMqConnection) channel.getProduceConnection();
       Connection origCon = conn.wrappedConnection();
       assertNotNull(origCon);
 
-      waitForRecovery(channel, () -> excHandler.handleTopologyRecoveryException(null, null,
-          new TopologyRecoveryException("", new Exception())));
+      waitForRecovery(channel,
+          () -> excHandler.handleTopologyRecoveryException(null, null, new TopologyRecoveryException("", new Exception())));
       assertNotNull(conn.wrappedConnection());
       assertNotSame(origCon, conn.wrappedConnection());
     } finally {
@@ -228,14 +219,12 @@ public class RestartExceptionHandlerTest {
     action.trigger();
     // Wait for the transition to include a StoppedState (init,start,stop,close,init,start should
     // the states...
-    Awaitility.await().atMost(Duration.ofSeconds(5)).with().pollInterval(Duration.ofMillis(50))
-        .until(() -> channel.getStopCount() >= 1);
+    Awaitility.await().atMost(Duration.ofSeconds(5)).with().pollInterval(Duration.ofMillis(50)).until(() -> channel.getStopCount() >= 1);
 
     // Now wait for it to be restarted.
     Awaitility.await().atMost(Duration.ofSeconds(5)).with().pollInterval(Duration.ofMillis(50))
         .until(() -> channel.retrieveComponentState() == StartedState.getInstance());
   }
-
 
   protected String brokerURL() {
     return JunitConfig.brokerURL();
@@ -245,4 +234,5 @@ public class RestartExceptionHandlerTest {
   private interface Action {
     public void trigger();
   }
+
 }

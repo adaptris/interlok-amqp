@@ -1,6 +1,7 @@
 package interlok.rabbitmq;
 
 import java.util.Optional;
+
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.ComponentProfile;
 import com.adaptris.annotation.InputFieldHint;
@@ -8,6 +9,7 @@ import com.adaptris.interlok.resolver.ExternalResolver;
 import com.adaptris.security.password.Password;
 import com.rabbitmq.client.ConnectionFactory;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,25 +17,23 @@ import lombok.Setter;
 /**
  * A basic connection factory for RabbitMQ.
  * <p>
- * Extends {@link SimpleConnectionFactoryBuilder} and provides obfuscated password support. Both
- * fields are entirely optional and you may still override the username and password via the URL. If
- * the username and password are not explicitly specified then it may well default to
- * {@code guest/guest} which appears to be the RabbitMQ SDK defaults.
+ * Extends {@link SimpleConnectionFactoryBuilder} and provides obfuscated password support. Both fields are entirely optional and you may
+ * still override the username and password via the URL. If the username and password are not explicitly specified then it may well default
+ * to {@code guest/guest} which appears to be the RabbitMQ SDK defaults.
  * </p>
  */
 @XStreamAlias("rabbitmq-basic-connection-factory")
 @AdapterComponent
-@ComponentProfile(summary = "Basic RabbitMQ Connection Builder", since="4.3.0")
+@ComponentProfile(summary = "Basic RabbitMQ Connection Builder", since = "4.3.0")
 @NoArgsConstructor
 public class BasicConnectionFactoryBuilder extends SimpleConnectionFactoryBuilder {
 
   /**
    * The username used to connection to the broker.
    * <p>
-   * If you do not explicitly override the user then it is likely to default to {@code guest} which
-   * appears to be the RabbitMQ SDK default.
+   * If you do not explicitly override the user then it is likely to default to {@code guest} which appears to be the RabbitMQ SDK default.
    * </p>
-   * 
+   *
    */
   @Setter
   @Getter
@@ -41,8 +41,8 @@ public class BasicConnectionFactoryBuilder extends SimpleConnectionFactoryBuilde
   /**
    * The password.
    * <p>
-   * If you do not explicitly override the password then it is likely to default to {@code guest} which
-   * appears to be the RabbitMQ SDK default.
+   * If you do not explicitly override the password then it is likely to default to {@code guest} which appears to be the RabbitMQ SDK
+   * default.
    * </p>
    */
   @Setter
@@ -59,10 +59,11 @@ public class BasicConnectionFactoryBuilder extends SimpleConnectionFactoryBuilde
     return factory;
   }
 
-  @SuppressWarnings({"unchecked"})
+  @SuppressWarnings({ "unchecked" })
   public <T extends BasicConnectionFactoryBuilder> T withCredentials(String u, String p) {
     setUsername(u);
     setPassword(p);
     return (T) this;
   }
+
 }

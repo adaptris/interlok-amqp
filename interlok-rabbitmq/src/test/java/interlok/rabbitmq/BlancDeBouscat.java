@@ -3,12 +3,15 @@ package interlok.rabbitmq;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Map;
+
 import org.awaitility.Awaitility;
+
 import com.adaptris.core.MetadataElement;
 import com.adaptris.interlok.util.Closer;
 import com.rabbitmq.client.AMQP.BasicProperties;
@@ -20,7 +23,7 @@ import com.rabbitmq.client.GetResponse;
 // The Blanc de Bouscat is a large white rabbit originally bred in France in 1906.. It's at risk
 // so we immortalize it in code (!).
 public class BlancDeBouscat implements AutoCloseable {
-  
+
   private Connection connection;
   private Channel channel;
   private String myQueue;
@@ -33,7 +36,7 @@ public class BlancDeBouscat implements AutoCloseable {
     myQueue = queue;
     channel.queueDeclare(myQueue, true, false, false, null);
   }
-  
+
   public GetResponse getAndVerify(String expected) throws Exception {
     // Some timing issues because we have to go through the exchange
     // so wait
@@ -49,14 +52,12 @@ public class BlancDeBouscat implements AutoCloseable {
   public void publish(String data, BasicProperties properties) throws Exception {
     channel.basicPublish("", myQueue, properties, data.getBytes(StandardCharsets.UTF_8));
   }
-  
+
   public void publish(String data) throws Exception {
     publish(data, null);
   }
 
-  
-  public GetResponse getAndVerify(String expected, Collection<MetadataElement> metadata)
-      throws Exception {
+  public GetResponse getAndVerify(String expected, Collection<MetadataElement> metadata) throws Exception {
     GetResponse response = getAndVerify(expected);
     Map<String, Object> msgHeaders = response.getProps().getHeaders();
     assertNotNull(msgHeaders);
@@ -73,7 +74,6 @@ public class BlancDeBouscat implements AutoCloseable {
     Closer.closeQuietly(channel, connection);
   }
 
-
   private static void executeQuietly(ChannelOperation op) {
     try {
       op.execute();
@@ -86,4 +86,5 @@ public class BlancDeBouscat implements AutoCloseable {
   private interface ChannelOperation {
     void execute() throws IOException;
   }
+
 }
