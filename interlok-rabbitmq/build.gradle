@@ -9,7 +9,7 @@ ext {
 
 dependencies {
   implementation ("com.rabbitmq:amqp-client:5.20.0")
-  testImplementation ("org.awaitility:awaitility:4.2.0")   
+  testImplementation ("org.awaitility:awaitility:4.2.1")   
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
