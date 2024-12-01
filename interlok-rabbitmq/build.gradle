@@ -76,7 +76,6 @@ publishing {
   }
 }
 
-
 delombok {
   target = delombokTargetDir
 }
