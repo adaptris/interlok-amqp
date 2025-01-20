@@ -3,7 +3,7 @@ package com.adaptris.core.amqp.rabbitmq;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 
 import org.junit.jupiter.api.Test;
 
