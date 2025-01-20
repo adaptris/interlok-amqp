@@ -26,7 +26,7 @@ public class BasicQpidImplementationTest extends BaseCase {
       connection.start();
       // start(connection);
       assertNotNull(connection.currentConnection());
-      assertTrue(connection.currentConnection() instanceof javax.jms.Connection);
+      assertTrue(connection.currentConnection() instanceof jakarta.jms.Connection);
       assertNotNull(connection.currentConnection().getMetaData());
 
     } catch (Exception ex) {
