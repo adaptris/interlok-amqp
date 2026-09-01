@@ -1,3 +1,4 @@
 rootProject.name = 'interlok-amqp-parent'
 include 'interlok-amqp'
 include 'interlok-rabbitmq'
+include 'interlok-artemis-amqp'
