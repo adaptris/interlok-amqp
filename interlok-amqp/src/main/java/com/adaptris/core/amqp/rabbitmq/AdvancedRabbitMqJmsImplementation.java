@@ -2,9 +2,9 @@ package com.adaptris.core.amqp.rabbitmq;
 
 import java.util.Arrays;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.validation.constraints.NotNull;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
+import jakarta.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.BooleanUtils;
 
