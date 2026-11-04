@@ -9,7 +9,7 @@ ext {
 
 dependencies {
   api platform(interlokCatalogPlatform)
-  implementation ("com.rabbitmq:amqp-client:5.37.0")
+  implementation ("com.rabbitmq:amqp-client")
   testImplementation ("org.awaitility:awaitility")
 }
 
