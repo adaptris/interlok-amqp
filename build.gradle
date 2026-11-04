@@ -194,8 +194,6 @@ subprojects {
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
     testImplementation ("org.slf4j:slf4j-simple")
 
-    testRuntimeOnly ("org.slf4j:slf4j-simple")
-
     javadoc platform(interlokCatalogPlatform)
     javadoc("com.adaptris:interlok-core-apt") { changing= true}
 
