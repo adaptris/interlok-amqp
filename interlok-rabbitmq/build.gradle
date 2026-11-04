@@ -8,8 +8,9 @@ ext {
 }
 
 dependencies {
-  implementation ("com.rabbitmq:amqp-client:5.37.0")
-  testImplementation ("org.awaitility:awaitility:4.3.0")   
+  api platform(interlokCatalogPlatform)
+  implementation ("com.rabbitmq:amqp-client")
+  testImplementation ("org.awaitility:awaitility")
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
